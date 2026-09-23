@@ -26,7 +26,7 @@ import { LucideAngularModule, ExternalLink, X } from 'lucide-angular';
           </p>
           
           <div class="mt-4 rounded-xl border border-slate-200 overflow-hidden bg-slate-50 flex items-center justify-center">
-             <img src="/remix-pdf.png" alt="Hướng dẫn Remix app" referrerpolicy="no-referrer" class="w-full h-auto object-contain max-h-[60vh]">
+             <img src="remix-pdf.png" alt="Hướng dẫn Remix app" referrerpolicy="no-referrer" class="w-full h-auto object-contain max-h-[60vh]">
           </div>
         </div>
         <div class="p-5 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">

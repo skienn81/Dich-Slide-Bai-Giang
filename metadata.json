@@ -1,0 +1,8 @@
+{
+  "name": "Dịch dài liệu",
+  "description": "Dịch file PDF chuyên ngành từ tiếng Anh sang tiếng Việt với Gemini 3.8 Flash và Gemini Pro, bảo toàn hình ảnh, công thức toán và đồ thị.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

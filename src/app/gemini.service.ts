@@ -1,0 +1,328 @@
+import { Injectable } from '@angular/core';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+
+export interface TranslationResult {
+  text: string;
+  usageMetadata?: any;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GeminiService {
+  readonly MODEL_NAME_PRO = 'gemini-pro-latest';
+  readonly MODEL_NAME_FLASH = 'gemini-3.8-flash';
+  readonly MODEL_NAME_FLASH_LITE = 'gemini-3.1-flash-lite';
+
+  private getAiInstance(): GoogleGenAI {
+    if (typeof localStorage !== 'undefined') {
+      const userKey = localStorage.getItem('sila_pdf_translator_user_api_key');
+      if (userKey && userKey.trim() !== '') {
+        return new GoogleGenAI({ 
+           apiKey: userKey.trim(),
+           // When calling from browser, the SDK handles CORS properly with rest endpoints.
+        });
+      }
+    }
+    throw new Error('Vui lòng thiết lập "API Key cá nhân" trong phần "Nhập API Key" (nằm ngay dưới logo) để sử dụng ứng dụng.');
+  }
+
+  async countTokens(fileData: string, mimeType: string): Promise<number> {
+    try {
+      const ai = this.getAiInstance();
+      const contentParts = mimeType === 'text/html' ? [{ text: fileData }] : [{
+        inlineData: {
+          data: fileData,
+          mimeType: mimeType
+        }
+      }];
+      
+      const result = await ai.models.countTokens({
+        model: this.MODEL_NAME_FLASH_LITE,
+        contents: [
+          { parts: contentParts as unknown as Record<string, unknown>[] }
+        ]
+      });
+      return result.totalTokens || 0;
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(e.message);
+      }
+      throw new Error('Lỗi khi tính số token.');
+    }
+  }
+
+  private extractTextFromResponse(response: { candidates?: { finishReason?: string }[]; text?: string }): string {
+    const candidate = response.candidates?.[0];
+    if (candidate?.finishReason) {
+      const reason = candidate.finishReason;
+      if (reason === 'RECITATION') {
+        throw new Error('Google Gemini từ chối xử lý file này do chính sách bản quyền (Recitation). Vui lòng sử dụng chế độ Dịch 1 giai đoạn.');
+      } else if (reason === 'SAFETY') {
+        throw new Error('Tài liệu bị từ chối do vi phạm chính sách an toàn của Google (Safety).');
+      }
+    }
+
+    const text = response.text;
+    if (!text) {
+      throw new Error('Gemini không trả về kết quả (có thể do lỗi hệ thống hoặc bộ lọc). Vui lòng thử lại.');
+    }
+
+    return text;
+  }
+
+  async translate(
+    fileData: string,
+    mimeType: string,
+    prompt: string,
+    systemInstruction: string,
+    useGoogleSearch = false,
+    modelName: string = this.MODEL_NAME_FLASH,
+    images: {id: string, dataUrl: string}[] = []
+  ): Promise<TranslationResult> {
+    const ai = this.getAiInstance();
+    const config: Record<string, unknown> = {
+      systemInstruction: { parts: [{ text: systemInstruction }] },
+      thinkingConfig: { thinkingLevel: 'LOW' },
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
+      ]
+    };
+    
+    if (useGoogleSearch) {
+      config['tools'] = [{ googleSearch: {} }];
+    }
+
+    const parts: any[] = [];
+    
+    // Add the main document
+    const cleanFileData = fileData.includes(',') ? fileData.split(',')[1] : fileData;
+    parts.push({
+      inlineData: {
+        data: cleanFileData,
+        mimeType: mimeType
+      }
+    });
+
+    // Add extracted images
+    for (const img of images) {
+      if (img.dataUrl.includes(',')) {
+        const mime = img.dataUrl.split(';')[0].split(':')[1];
+        const data = img.dataUrl.split(',')[1];
+        parts.push({
+          inlineData: {
+            data: data,
+            mimeType: mime
+          }
+        });
+        parts.push({ text: `(This image has ID: ${img.id})` });
+      }
+    }
+
+    if (images.length > 0) {
+      parts.push({ text: `\n[DANH SÁCH ẢNH TRÍCH XUẤT TỪ FILE PDF]\nCác ID hình ảnh có sẵn: ${images.map(img => img.id).join(', ')}\nKhi chèn hình ảnh minh họa bài giảng, hãy dùng đúng thẻ: <img src="ID_HÌNH_ẢNH" alt="..." class="slide-img">\n` });
+    } else {
+      parts.push({ text: `\n[LƯU Ý HÌNH ẢNH TRONG BÀI GIẢNG]\nKhông có tệp ảnh raster độc lập nào được trích xuất từ PDF này. Nếu bài giảng có đồ thị, trục tọa độ, sơ đồ mạch, hoặc hình vẽ hình học: BẮT BUỘC vẽ lại trực quan bằng đồ họa vector inline <svg viewBox="0 0 400 300" class="slide-svg">...</svg> hoặc cấu trúc HTML/CSS. TUYỆT ĐỐI KHÔNG tự tạo thẻ <img> với ID giả mạo như [ID_CỦA_ẢNH] hoặc placeholder làm hỏng giao diện.\n` });
+    }
+
+    // Add the user prompt
+    parts.push({ text: prompt });
+
+    try {
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: [{ parts: parts }],
+        config
+      });
+
+      return {
+        text: this.extractTextFromResponse(response),
+        usageMetadata: response.usageMetadata
+      };
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(e.message);
+      }
+      throw new Error('Lỗi không xác định khi dịch tài liệu');
+    }
+  }
+
+  async translateHtml(
+    htmlContent: string,
+    prompt: string,
+    systemInstruction: string,
+    useGoogleSearch = false,
+    modelName: string = this.MODEL_NAME_FLASH,
+    images: {id: string, dataUrl: string}[] = []
+  ): Promise<TranslationResult> {
+    const ai = this.getAiInstance();
+    const config: Record<string, unknown> = {
+      systemInstruction: { parts: [{ text: systemInstruction }] },
+      thinkingConfig: { thinkingLevel: 'LOW' },
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
+      ]
+    };
+    if (useGoogleSearch) {
+      config['tools'] = [{ googleSearch: {} }];
+    }
+
+    const parts: any[] = [];
+    
+    const cleanHtmlContent = htmlContent.includes(',') ? htmlContent.split(',')[1] : htmlContent;
+    parts.push({
+      inlineData: {
+        data: cleanHtmlContent,
+        mimeType: 'text/html'
+      }
+    });
+
+    if (images && images.length > 0) {
+      const ids = images.map(img => img.id).join(', ');
+      parts.push({ text: `Tài liệu HTML này chứa các hình ảnh có ID sau: [${ids}]. Nhiệm vụ của bạn là giữ nguyên các thẻ <img> và thuộc tính src tương ứng của chúng trong mã HTML kết quả.` });
+    }
+
+    parts.push({ text: prompt });
+
+    try {
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: [{ parts: parts }],
+        config
+      });
+
+      return {
+        text: this.extractTextFromResponse(response),
+        usageMetadata: response.usageMetadata
+      };
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(e.message);
+      }
+      throw new Error('Lỗi khi dịch HTML');
+    }
+  }
+
+  async translateSingleImageToHtml(dataUrl: string, modelName: string = this.MODEL_NAME_FLASH): Promise<string> {
+    const ai = this.getAiInstance();
+    const systemInstruction = `Bạn là một chuyên gia thiết kế web, UI/UX và phiên dịch.
+Người dùng gửi cho bạn một hình ảnh.
+Nhiệm vụ 1: Đánh giá xem hình ảnh này có phải là sơ đồ, biểu đồ, hình vẽ kỹ thuật, hay bất kỳ hình thức nào chứa văn bản cần dịch không. Nếu đây là ảnh chụp thông thường (chân dung, phong cảnh, động vật, nhà cửa, v.v.) không chứa nội dung cần dịch, hãy trả về CHÍNH XÁC chuỗi: [REJECT].
+Nhiệm vụ 2: Nếu hình ảnh hợp lệ, hãy tái tạo lại hình ảnh đó bằng HTML và CSS một cách chính xác và thẩm mỹ nhất. Dịch tất cả văn bản trong hình sang Tiếng Việt.
+YÊU CẦU KỸ THUẬT QUAN TRỌNG:
+1. Tính tương thích (Responsive): Cấu trúc tạo ra phải co giãn tốt. TUYỆT ĐỐI KHÔNG thiết lập chiều rộng cố định (như width: 800px) gây tràn khung. Dùng \`max-width: 100%\`, \`width: 100%\`, \`box-sizing: border-box\`, và các đơn vị tương đối (%, rem, em). Đảm bảo tuyệt đối KHÔNG xuất hiện thanh cuộn ngang.
+2. Bố cục thông minh: Ưu tiên sử dụng Flexbox hoặc CSS Grid để xây dựng bố cục sơ đồ, biểu đồ mạch lạc. Tránh lạm dụng \`position: absolute\` trừ khi thực sự cần thiết (như chú thích điểm ảnh), giúp cấu trúc linh hoạt trên mọi kích thước màn hình.
+3. Typography & UI: Sử dụng \`font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;\` để văn bản hiển thị hiện đại, chuyên nghiệp. Điều chỉnh \`font-size\`, \`line-height\` và \`padding\` linh hoạt sao cho nội dung tiếng Việt dễ đọc, không bị che khuất hoặc tràn khỏi container.
+4. Màu sắc & Hình khối: Cố gắng mô phỏng trung thực (hoặc cải thiện để đẹp mắt hơn) màu sắc nền, độ tương phản chữ, border-radius, border, và shadow từ ảnh gốc để kết quả trông sắc nét và chuyên nghiệp.
+Chỉ trả về mã HTML (được phép bao gồm thẻ <style> bên trong, không chứa markdown như \`\`\`html), không giải thích gì thêm.`;
+
+    const config: Record<string, unknown> = {
+      systemInstruction: { parts: [{ text: systemInstruction }] },
+      thinkingConfig: { thinkingLevel: 'LOW' },
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
+      ]
+    };
+
+    const mime = dataUrl.split(';')[0].split(':')[1];
+    const data = dataUrl.split(',')[1];
+    
+    const parts: any[] = [
+      {
+        inlineData: {
+          data: data,
+          mimeType: mime
+        }
+      },
+      { text: "Hãy tái tạo và dịch hình ảnh này sang HTML/CSS. Nếu không phải hình cần dịch, trả về [REJECT]." }
+    ];
+
+    try {
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: [{ parts: parts }],
+        config
+      });
+      return this.extractTextFromResponse(response);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(e.message);
+      }
+      throw new Error('Lỗi khi dịch hình ảnh');
+    }
+  }
+
+  async translateSearchQuery(query: string, searchModel: 'gemini-3.1-flash-lite' | 'gemini-3.8-flash' | string = this.MODEL_NAME_FLASH_LITE): Promise<string> {
+    const ai = this.getAiInstance();
+    const systemInstruction = `Bạn là một AI chuyên dịch truy vấn tìm kiếm (search queries) từ tiếng Việt sang Tiếng Anh. Nhiệm vụ DUY NHẤT của bạn là trả về MỘT (1) truy vấn tìm kiếm tiếng Anh hiệu quả nhất, dựa trên đánh giá của bạn về ý định (search intent) và cách tìm kiếm phổ biến nhất trong tiếng Anh.
+
+QUY TẮC BẮT BUỘC TUÂN THỦ:
+1.  **CHỈ MỘT KẾT QUẢ:** Luôn luôn và chỉ luôn trả về DUY NHẤT MỘT chuỗi văn bản là bản dịch truy vấn tốt nhất. KHÔNG được đưa ra nhiều lựa chọn.
+2.  **CHỈ VĂN BẢN THUẦN TÚY:** Kết quả trả về CHỈ BAO GỒM văn bản tiếng Anh đã dịch. TUYỆT ĐỐI KHÔNG thêm bất kỳ lời chào, lời giải thích, ghi chú, dấu ngoặc kép bao quanh, định dạng markdown, hoặc bất kỳ ký tự/từ ngữ nào khác ngoài chính truy vấn đã dịch.
+3.  **ƯU TIÊN HIỆU QUẢ TÌM KIẾM HỌC THUẬT:** Mục tiêu là tạo ra truy vấn mà các nhà nghiên cứu, sinh viên thực sự sẽ gõ vào máy tìm kiếm tài liệu khoa học (như Google Scholar). Ưu tiên thuật ngữ chuyên ngành (academic terminology), danh từ cốt lõi, và các từ khóa nghiên cứu phổ biến (ví dụ: impact of, efficacy, meta-analysis, case study, literature review, characteristics, v.v.). Tránh các từ giao tiếp thông thường.
+4.  **ĐỘ CHÍNH XÁC VỀ Ý ĐỊNH:** Nắm bắt chính xác nhất ý định đằng sau truy vấn gốc tiếng Việt. Nếu mơ hồ, hãy chọn cách diễn giải phổ biến hoặc khả năng cao nhất.
+5.  **ĐỊNH DẠNG ĐẦU RA:** Đảm bảo đầu ra là một chuỗi văn bản thuần túy (plain text string) duy nhất, sẵn sàng để sao chép và dán trực tiếp vào thanh tìm kiếm.`;
+
+    const prompt = `Provide the single best English search query translation for the following Vietnamese query. Output ONLY the raw English text, nothing else: ${query}`;
+
+    try {
+      const response = await ai.models.generateContent({
+        model: searchModel,
+        contents: [
+          { parts: [{ text: prompt }] }
+        ],
+        config: {
+          systemInstruction: { parts: [{ text: systemInstruction }] },
+          safetySettings: [
+            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
+          ]
+        }
+      });
+
+      return (response.text || '').trim();
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(e.message);
+      }
+      throw new Error('Lỗi khi dịch từ khóa');
+    }
+  }
+
+  public parseGeminiError(e: unknown): string {
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    if (!errorMessage) {
+      return 'Lỗi không xác định';
+    }
+
+    try {
+      if (errorMessage.includes('{') && errorMessage.includes('}')) {
+        const startIdx = errorMessage.indexOf('{');
+        const endIdx = errorMessage.lastIndexOf('}') + 1;
+        const jsonPart = errorMessage.substring(startIdx, endIdx);
+        const parsed = JSON.parse(jsonPart);
+        if (parsed.error?.message) {
+          return parsed.error.message;
+        } else if (parsed.message) {
+          return parsed.message;
+        }
+      }
+    } catch {
+      // Ignored
+    }
+
+    return errorMessage;
+  }
+}
+

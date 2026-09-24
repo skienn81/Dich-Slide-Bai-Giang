@@ -19,21 +19,9 @@ export const AVAILABLE_MODELS: ModelOption[] = [
     category: 'flash',
     maxPdfTokens: 80000,
     maxHtmlTokens: 120000,
-    badge: 'Mới nhất',
+    badge: 'Mặc định • 80K',
     badgeColor: 'emerald',
     description: 'Thế hệ Flash 3.8 mới nhất, tốc độ cao, đa phương thức mạnh mẽ (80K tokens)',
-    recommended: true
-  },
-  {
-    id: 'gemini-2.5-flash',
-    name: 'Gemini 2.5 Flash',
-    shortName: 'Flash 2.5',
-    category: 'flash',
-    maxPdfTokens: 80000,
-    maxHtmlTokens: 120000,
-    badge: 'Rất ổn định • Ít nghẽn',
-    badgeColor: 'sky',
-    description: 'Hạn mức TPM cực cao, ít khi quá tải, dự phòng hoàn hảo khi 3.8 bận (80K tokens)',
     recommended: true
   },
   {
@@ -43,9 +31,21 @@ export const AVAILABLE_MODELS: ModelOption[] = [
     category: 'flash',
     maxPdfTokens: 80000,
     maxHtmlTokens: 120000,
-    badge: 'Flash 3.7',
+    badge: 'Khuyên dùng • 80K',
+    badgeColor: 'sky',
+    description: 'Rất ổn định, suy luận tốt, dự phòng hoàn hảo khi 3.8 quá tải (80K tokens)',
+    recommended: true
+  },
+  {
+    id: 'gemini-3.6-flash',
+    name: 'Gemini 3.6 Flash',
+    shortName: 'Flash 3.6',
+    category: 'flash',
+    maxPdfTokens: 80000,
+    maxHtmlTokens: 120000,
+    badge: '80K tokens',
     badgeColor: 'emerald',
-    description: 'Cân bằng giữa tốc độ và khả năng suy luận, 80K tokens'
+    description: 'Dòng Flash 3.6 ổn định cao, tốc độ phản hồi nhanh (80K tokens)'
   },
   {
     id: 'gemini-3.5-flash',
@@ -54,31 +54,64 @@ export const AVAILABLE_MODELS: ModelOption[] = [
     category: 'flash',
     maxPdfTokens: 80000,
     maxHtmlTokens: 120000,
-    badge: 'Flash 3.5',
+    badge: '80K tokens',
     badgeColor: 'emerald',
-    description: 'Phiên bản Flash 3.5 ổn định cao, phản hồi nhanh (80K tokens)'
+    description: 'Mô hình Flash 3.5 dự phòng đáng tin cậy (80K tokens)'
   },
   {
-    id: 'gemini-2.0-flash',
-    name: 'Gemini 2.0 Flash',
-    shortName: 'Flash 2.0',
-    category: 'flash',
-    maxPdfTokens: 60000,
-    maxHtmlTokens: 90000,
-    badge: 'Siêu tốc',
-    badgeColor: 'amber',
-    description: 'Phản hồi cực nhanh cho tài liệu vừa và nhỏ (60K tokens)'
-  },
-  {
-    id: 'gemini-2.5-flash-lite',
-    name: 'Gemini 2.5 Flash-Lite',
-    shortName: 'Flash 2.5 Lite',
+    id: 'gemini-3.5-flash-lite',
+    name: 'Gemini 3.5 Flash Lite',
+    shortName: 'Flash 3.5 Lite',
     category: 'flash',
     maxPdfTokens: 80000,
     maxHtmlTokens: 120000,
-    badge: 'Siêu nhẹ',
+    badge: 'Siêu nhẹ • 80K',
     badgeColor: 'teal',
-    description: 'Tiết kiệm token tối đa, độ trễ thấp nhất (80K tokens)'
+    description: 'Bản Flash-Lite 3.5 tối ưu độ trễ, tiết kiệm tài nguyên (80K tokens)'
+  },
+  {
+    id: 'gemini-3.1-flash-lite',
+    name: 'Gemini 3.1 Flash Lite',
+    shortName: 'Flash 3.1 Lite',
+    category: 'flash',
+    maxPdfTokens: 80000,
+    maxHtmlTokens: 120000,
+    badge: 'Siêu nhẹ • 80K',
+    badgeColor: 'teal',
+    description: 'Bản Lite 3.1 phản hồi tức thì cho tài liệu dung lượng nhẹ (80K tokens)'
+  },
+  {
+    id: 'gemini-3-flash-preview',
+    name: 'Gemini 3 Flash Preview',
+    shortName: 'Flash 3 Preview',
+    category: 'flash',
+    maxPdfTokens: 80000,
+    maxHtmlTokens: 120000,
+    badge: 'Preview • 80K',
+    badgeColor: 'amber',
+    description: 'Bản Preview của thế hệ Gemini 3 Flash (80K tokens)'
+  },
+  {
+    id: 'gemini-flash-latest',
+    name: 'Gemini Flash Latest',
+    shortName: 'Flash Latest',
+    category: 'flash',
+    maxPdfTokens: 80000,
+    maxHtmlTokens: 120000,
+    badge: 'Auto Update • 80K',
+    badgeColor: 'emerald',
+    description: 'Tự động trỏ tới phiên bản Flash mới nhất của Google (80K tokens)'
+  },
+  {
+    id: 'gemini-flash-lite-latest',
+    name: 'Gemini Flash-Lite Latest',
+    shortName: 'Flash-Lite Latest',
+    category: 'flash',
+    maxPdfTokens: 80000,
+    maxHtmlTokens: 120000,
+    badge: 'Auto Update • 80K',
+    badgeColor: 'teal',
+    description: 'Tự động trỏ tới bản Flash-Lite mới nhất của Google (80K tokens)'
   },
   {
     id: 'gemini-pro-latest',
@@ -87,20 +120,9 @@ export const AVAILABLE_MODELS: ModelOption[] = [
     category: 'pro',
     maxPdfTokens: 30000,
     maxHtmlTokens: 35000,
-    badge: 'Toán & Kỹ thuật',
+    badge: 'Toán & Kỹ thuật • 30K',
     badgeColor: 'indigo',
     description: 'Phân tích lập luận và công thức toán học chuyên sâu (30K tokens)'
-  },
-  {
-    id: 'gemini-2.5-pro',
-    name: 'Gemini 2.5 Pro',
-    shortName: 'Pro 2.5',
-    category: 'pro',
-    maxPdfTokens: 30000,
-    maxHtmlTokens: 35000,
-    badge: 'Pro 2.5',
-    badgeColor: 'indigo',
-    description: 'Bản Pro ổn định cao cho slide học thuật phức tạp (30K tokens)'
   }
 ];
 

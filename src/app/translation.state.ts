@@ -301,7 +301,7 @@ export class TranslationState {
       if (tokens > maxTokens) {
         const info = getModelInfo(this.selectedModel());
         if (info.category === 'pro') {
-          this.showToast('error', `Tài liệu có ${tokens.toLocaleString()} tokens (vượt trần ${maxTokens.toLocaleString()} của bản Pro). Bạn hãy chuyển sang mô hình Flash (Gemini 2.5 Flash / 3.8 Flash) ở thanh công cụ để nâng giới hạn lên 80.000 tokens hoặc dùng tính năng "Cắt trang".`);
+          this.showToast('error', `Tài liệu có ${tokens.toLocaleString()} tokens (vượt trần ${maxTokens.toLocaleString()} của bản Pro). Bạn hãy chuyển sang mô hình Flash (Gemini 3.8 Flash / 3.7 Flash) ở thanh công cụ để nâng giới hạn lên 80.000 tokens hoặc dùng tính năng "Cắt trang".`);
         } else {
           this.showToast('error', `Lỗi: Nội dung vượt quá giới hạn ${maxTokens.toLocaleString()} tokens của mô hình ${info.name} (${tokens.toLocaleString()} tokens). Vui lòng dùng tính năng "Cắt trang" để dịch theo từng phần.`);
         }
@@ -337,8 +337,8 @@ export class TranslationState {
       
       // Auto-fallback if Flash 3.8 experiences high demand/overload
       if (isHighDemand && currentModel === 'gemini-3.8-flash') {
-        const fallback = 'gemini-2.5-flash';
-        this.showToast('info', 'Mô hình Flash 3.8 đang tăng tải đột biến. Đang tự động chuyển sang Gemini 2.5 Flash để tiếp tục ngay...');
+        const fallback = 'gemini-3.7-flash';
+        this.showToast('info', 'Mô hình Flash 3.8 đang tăng tải đột biến. Đang tự động chuyển sang Gemini 3.7 Flash để tiếp tục ngay...');
         this.selectedModel.set(fallback);
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem('sila_pdf_translator_selected_model', fallback);
@@ -366,8 +366,8 @@ export class TranslationState {
                            parsedError.toLowerCase().includes('high demand');
       
       if (isHighDemand && currentModel === 'gemini-3.8-flash') {
-        const fallback = 'gemini-2.5-flash';
-        this.showToast('info', 'Mô hình Flash 3.8 đang tăng tải đột biến. Đang tự động chuyển sang Gemini 2.5 Flash để tiếp tục ngay...');
+        const fallback = 'gemini-3.7-flash';
+        this.showToast('info', 'Mô hình Flash 3.8 đang tăng tải đột biến. Đang tự động chuyển sang Gemini 3.7 Flash để tiếp tục ngay...');
         this.selectedModel.set(fallback);
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem('sila_pdf_translator_selected_model', fallback);
@@ -514,13 +514,13 @@ export class TranslationState {
       if (parsedError.includes('429') || parsedError.toLowerCase().includes('quota')) {
         const info = getModelInfo(this.selectedModel());
         if (info.category === 'pro') {
-          this.showToast('error', 'Lỗi 429: Bản Pro đã bị quá hạn mức yêu cầu (Rate Limit). Vui lòng chuyển sang mô hình Flash (Gemini 2.5 Flash / 3.8 Flash) ở thanh tiêu đề (hạn mức TPM cao hơn nhiều) để tiếp tục ngay.');
+          this.showToast('error', 'Lỗi 429: Bản Pro đã bị quá hạn mức yêu cầu (Rate Limit). Vui lòng chuyển sang mô hình Flash (Gemini 3.8 Flash / 3.7 Flash) ở thanh tiêu đề (hạn mức TPM cao hơn nhiều) để tiếp tục ngay.');
         } else {
           this.showToast('error', 'Lỗi: API Key của bạn đã vượt quá giới hạn (Quota exceeded). Thử chuyển sang mô hình Flash khác trên thanh tiêu đề hoặc đợi sang ngày hôm sau.');
         }
       } 
       else if (parsedError.includes('503') || parsedError.toLowerCase().includes('overloaded') || parsedError.toLowerCase().includes('high demand')) {
-        this.showToast('error', `Lỗi: Mô hình ${currentModelName} đang có lượng truy cập tăng đột biến (High demand/Overloaded). Bạn hãy bấm vào nút chọn mô hình ở trên đầu và chuyển sang Flash khác (như Gemini 2.5 Flash) để dịch tiếp ngay!`);
+        this.showToast('error', `Lỗi: Mô hình ${currentModelName} đang có lượng truy cập tăng đột biến (High demand/Overloaded). Bạn hãy bấm vào nút chọn mô hình ở trên đầu và chuyển sang Flash khác (như Gemini 3.7 Flash) để dịch tiếp ngay!`);
       }
       else if (parsedError.toLowerCase().includes('safety') || parsedError.toLowerCase().includes('blocked')) {
         this.showToast('error', 'Lỗi: Tài liệu bị từ chối do vi phạm chính sách an toàn của Google.');

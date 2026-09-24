@@ -62,24 +62,24 @@ import { AVAILABLE_MODELS, ModelOption, getModelInfo } from './model-config';
               <span class="text-[9.5px] font-mono px-1 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-bold">80K</span>
             </button>
 
-            <!-- Quick Pill 2: Flash 2.5 (Rất ổn định khi 3.8 quá tải) -->
+            <!-- Quick Pill 2: Flash 3.7 (Rất ổn định khi 3.8 quá tải) -->
             <button 
               type="button"
               [disabled]="isProcessing"
-              (click)="onModelChange('gemini-2.5-flash')"
-              title="Gemini 2.5 Flash (80K tokens - Rất ổn định, ít nghẽn mạng)"
+              (click)="onModelChange('gemini-3.7-flash')"
+              title="Gemini 3.7 Flash (80K tokens - Rất ổn định, ít nghẽn mạng)"
               class="group relative flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
               [class.cursor-not-allowed]="isProcessing"
               [class.cursor-pointer]="!isProcessing"
-              [class.opacity-50]="isProcessing && selectedModel !== 'gemini-2.5-flash'"
-              [ngClass]="selectedModel === 'gemini-2.5-flash' ? 'bg-white text-sky-600 shadow-sm ring-1 ring-slate-900/5' : (isProcessing ? 'text-slate-400' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50')"
+              [class.opacity-50]="isProcessing && selectedModel !== 'gemini-3.7-flash'"
+              [ngClass]="selectedModel === 'gemini-3.7-flash' ? 'bg-white text-sky-600 shadow-sm ring-1 ring-slate-900/5' : (isProcessing ? 'text-slate-400' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50')"
             >
               <lucide-icon [img]="Zap" class="w-3.5 h-3.5 text-sky-500"></lucide-icon>
-              <span>Flash 2.5</span>
+              <span>Flash 3.7</span>
               <span class="text-[9.5px] font-mono px-1 py-0.2 rounded bg-sky-50 text-sky-700 border border-sky-200/60 font-bold">80K</span>
             </button>
 
-            <!-- Dropdown for All Models (Flash 3.7, Flash 3.5, Pro, Lite...) -->
+            <!-- Dropdown for All Models (Flash 3.6, Flash 3.5, Pro, Lite...) -->
             <div class="relative">
               <button 
                 type="button"
@@ -89,7 +89,7 @@ import { AVAILABLE_MODELS, ModelOption, getModelInfo } from './model-config';
                 [class.cursor-not-allowed]="isProcessing"
                 [class.cursor-pointer]="!isProcessing"
                 [ngClass]="isCustomModelSelected ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-900/5' : (isProcessing ? 'text-slate-400' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50')"
-                title="Xem danh sách 8 mô hình Gemini (Pro, Flash 3.7, 3.5, 2.0...)"
+                title="Xem danh sách 10 mô hình Gemini khả dụng"
               >
                 @if (isCustomModelSelected) {
                   <lucide-icon [img]="currentModelInfo.category === 'flash' ? Zap : Sparkles" class="w-3.5 h-3.5" [class.text-emerald-500]="currentModelInfo.category === 'flash'" [class.text-indigo-500]="currentModelInfo.category === 'pro'"></lucide-icon>
@@ -217,7 +217,7 @@ export class HeaderControlsComponent {
   }
 
   get isCustomModelSelected(): boolean {
-    return this.selectedModel !== 'gemini-3.8-flash' && this.selectedModel !== 'gemini-2.5-flash';
+    return this.selectedModel !== 'gemini-3.8-flash' && this.selectedModel !== 'gemini-3.7-flash';
   }
 
   toggleMenu() {

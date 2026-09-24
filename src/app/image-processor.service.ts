@@ -216,7 +216,7 @@ ${fullScript}
 
   private getSlideStyles(): string {
     return `
-  /* TỰ DO KHÔNG GIAN CHIỀU DỌC & CHIỀU NGANG - ĐỒNG BỘ THEO SLIDE LỚN NHẤT */
+  /* TỰ DO KHÔNG GIAN CHIỀU DỌC & CHIỀU NGANG - TỰ ĐỘNG GIÃN NỞ CHỐNG NUỐT CHỮ */
   .lecture-slides-container {
     display: flex !important;
     flex-direction: column !important;
@@ -230,23 +230,30 @@ ${fullScript}
   .slide-canvas {
     width: 100% !important;
     min-width: min(100%, 940px) !important;
+    max-width: 1320px !important;
     min-height: auto !important;
     height: auto !important;
     overflow: visible !important;
     margin: 0 auto 36px auto !important;
     transition: width 0.15s ease !important;
     box-sizing: border-box !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
   }
   .slide-body {
     flex: none !important;
     height: auto !important;
+    min-height: auto !important;
     overflow: visible !important;
-    padding: 16px 32px 24px 32px !important;
+    padding: 18px 32px 26px 32px !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    box-sizing: border-box !important;
   }
   /* BỐ CỤC 2 CỘT CHUẨN MỰC & CÁC BIẾN THỂ */
   .two-column-layout, .grid-2-col, .slide-body-two-column {
     display: grid !important;
-    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr) !important;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr) !important;
     gap: 28px !important;
     align-items: start !important;
     width: 100% !important;
@@ -257,13 +264,15 @@ ${fullScript}
     display: flex !important;
     flex-direction: column !important;
     min-width: 0 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
   }
 
   .col-media, .slide-content-right, .image-col {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    min-width: 280px !important;
+    min-width: 260px !important;
   }
 
   .media-row, .img-group {
@@ -273,6 +282,63 @@ ${fullScript}
     align-items: center !important;
     flex-wrap: wrap !important;
     width: 100% !important;
+  }
+
+  /* LƯỚI THẺ TỔNG KẾT & TRỌNG TÂM BÀI HỌC (KEY TAKEAWAYS / CARD GRID) */
+  .card-grid, .cards-grid, .takeaways-grid, .grid-cards {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    width: 100% !important;
+    margin: 16px 0 !important;
+    box-sizing: border-box !important;
+  }
+  @media (max-width: 768px) {
+    .card-grid, .cards-grid, .takeaways-grid, .grid-cards {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  .card-item, .takeaway-item, .summary-card {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 14px 16px !important;
+    box-sizing: border-box !important;
+    line-height: 1.55 !important;
+    font-size: 0.95rem !important;
+    color: #1e293b !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .card-icon, .takeaway-icon {
+    flex-shrink: 0 !important;
+    font-size: 1.35rem !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .card-content, .takeaway-content {
+    flex: 1 !important;
+    min-width: 0 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+  .highlight-banner, .next-topic-banner, .next-week-box {
+    margin-top: 20px !important;
+    background: #f0f9ff !important;
+    border: 1px solid #bae6fd !important;
+    border-radius: 8px !important;
+    padding: 12px 20px !important;
+    color: #0369a1 !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
   }
 
   /* Header & Footer */
@@ -981,31 +1047,37 @@ ${fullScript}
     
     if (slides.length === 1) {
       slides[0].style.width = '100%';
-      slides[0].style.maxWidth = '1120px';
+      slides[0].style.maxWidth = '1320px';
+      slides[0].style.height = 'auto';
+      slides[0].style.overflow = 'visible';
       slides[0].style.marginLeft = 'auto';
       slides[0].style.marginRight = 'auto';
       return;
     }
 
-    // Reset inline width to let slides measure naturally
+    // Reset inline width to let slides measure naturally based on their content
     slides.forEach(s => {
       s.style.width = 'auto';
       s.style.maxWidth = 'none';
       s.style.minWidth = '0';
+      s.style.height = 'auto';
+      s.style.overflow = 'visible';
     });
 
-    // Determine the widest slide
+    // Determine the widest slide required by content (allows expanding beyond 960px up to 1320px+)
     let maxW = 960;
     slides.forEach(s => {
       const naturalW = Math.max(s.scrollWidth, Math.ceil(s.getBoundingClientRect().width));
       if (naturalW > maxW) maxW = naturalW;
     });
 
-    // Enforce uniform width across all slides for smooth scrolling
+    // Enforce uniform width across all slides for smooth scrolling, avoiding text clipping
     slides.forEach(s => {
       s.style.width = maxW + 'px';
-      s.style.minWidth = maxW + 'px';
+      s.style.minWidth = 'min(100%, ' + maxW + 'px)';
       s.style.maxWidth = '100%';
+      s.style.height = 'auto';
+      s.style.overflow = 'visible';
       s.style.marginLeft = 'auto';
       s.style.marginRight = 'auto';
     });

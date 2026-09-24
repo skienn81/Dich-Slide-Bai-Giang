@@ -204,6 +204,48 @@ BẮT BUỘC tuân thủ 100% cấu trúc thẻ và tên class chuẩn mực sau
   </div>
 </div>
 ```
+
+#### Mẫu 3: Slide Tổng kết Trọng tâm Bài học (Key Takeaways) hoặc Lưới Thẻ Kiến thức:
+```html
+<div class="slide-canvas" id="slide-[X]">
+  <div class="slide-header">
+    <div class="institution-header">[TÊN TRƯỜNG &bull; MÔN HỌC BẰNG TIẾNG ANH]</div>
+    <div class="slide-id-badge">Trang [X]/[TỔNG SỐ TRANG]</div>
+  </div>
+
+  <div class="slide-body">
+    <h2 class="slide-title">Tổng kết Trọng tâm Bài học <span class="en-subtitle">(Key Takeaways)</span></h2>
+
+    <!-- LƯỚI THẺ KIẾN THỨC 2 CỘT RỘNG RÃI -->
+    <div class="cards-grid">
+      <div class="card-item">
+        <div class="card-icon">💾</div>
+        <div class="card-content">
+          <strong>[Khái niệm 1]:</strong> [Giải thích ngắn gọn, súc tích kèm code/công thức nếu có].
+        </div>
+      </div>
+      <div class="card-item">
+        <div class="card-icon">🔄</div>
+        <div class="card-content">
+          <strong>[Khái niệm 2]:</strong> [Giải thích ngắn gọn, súc tích kèm ví dụ].
+        </div>
+      </div>
+    </div>
+
+    <!-- BANNER ĐIỂM NHẤN HOẶC HƯỚNG DẪN HỌC PHẦN TIẾP THEO -->
+    <div class="highlight-banner">
+      Tuần sau: &rarr; [Tên chủ đề kế tiếp hoặc trọng tâm giáo trình cần đọc trước]
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <span>[Môn học] &bull; [Tên trường]</span>
+    <span>[Tên chương] &bull; [X] / [TỔNG]</span>
+  </div>
+</div>
+```
+
+*Quy tắc kích thước*: Slide canvas có không gian co giãn vô tận về cả **chiều dài (chiều cao)** lẫn **chiều rộng**. Khi remake nội dung phong phú (take-notes, mổ xẻ code, chú giải công thức, tóm tắt), hãy để các phần tử tự động giãn dài và mở rộng kích thước phù hợp nhằm đảm bảo trải nghiệm đọc tối ưu nhất, TUYỆT ĐỐI KHÔNG nuốt chữ hay cắt xén nội dung.
 </slide_canvas_layout>
 
 <academic_math_and_syntax_rules>

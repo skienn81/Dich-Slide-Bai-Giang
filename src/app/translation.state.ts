@@ -92,20 +92,16 @@ export class TranslationState {
   private timerInterval: ReturnType<typeof setInterval> | undefined;
 
   constructor() {
+    // Mặc định tính năng Remake luôn là OFF khi tải ứng dụng để tiết kiệm token và tránh quá tải model
+    this.isRemakeMode.set(false);
     if (typeof localStorage !== 'undefined') {
-      const savedRemake = localStorage.getItem('sila_pdf_translator_remake_mode');
-      if (savedRemake === 'true') {
-        this.isRemakeMode.set(true);
-      }
+      localStorage.removeItem('sila_pdf_translator_remake_mode');
     }
   }
 
   toggleRemakeMode() {
     const nextVal = !this.isRemakeMode();
     this.isRemakeMode.set(nextVal);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sila_pdf_translator_remake_mode', String(nextVal));
-    }
     if (nextVal) {
       this.showToast('success', 'Đã bật chế độ Remake Slide! AI sẽ sáng tạo take-note, mổ xẻ code & chú giải công thức học tập.');
     } else {
@@ -463,8 +459,8 @@ export class TranslationState {
           this.showToast('error', 'Lỗi: API Key của bạn đã vượt quá giới hạn (Quota exceeded). Sử dụng API Key khác để tiếp tục ngay hoặc đợi sang ngày hôm sau.');
         }
       } 
-      else if (parsedError.includes('503') || parsedError.toLowerCase().includes('overloaded')) {
-        this.showToast('error', 'Lỗi: Máy chủ AI hiện đang bận (Overloaded). Vui lòng thử lại sau.');
+      else if (parsedError.includes('503') || parsedError.toLowerCase().includes('overloaded') || parsedError.toLowerCase().includes('high demand')) {
+        this.showToast('error', 'Lỗi: Máy chủ mô hình đang có lượng truy cập tăng đột biến (High demand/Overloaded). Vui lòng thử lại sau vài giây hoặc chuyển sang tab Pro.');
       }
       else if (parsedError.toLowerCase().includes('safety') || parsedError.toLowerCase().includes('blocked')) {
         this.showToast('error', 'Lỗi: Tài liệu bị từ chối do vi phạm chính sách an toàn của Google.');

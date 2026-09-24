@@ -198,7 +198,7 @@ Ví dụ về Output lý tưởng:
 <head>
     <!-- GIỮ NGUYÊN 100% toàn bộ thẻ <meta>, <script> và nội dung trong <style> của tài liệu gốc. TUYỆT ĐỐI KHÔNG DỊCH HOẶC ĐỔI CODE Ở ĐÂY -->
 	<!-- NGOẠI LỆ 1: với TITLE thì cần dịch sang tiếng Việt nội dung trong thẻ đó -->
-	<!-- NGOẠI LỆ 2: CSS CÓ THỂ BỔ SUNG THÊM ĐỂ HOÀN THIỆN CHẤT LƯỢNG HIỂN THỊ -->
+	<!-- NGOẠI LỆ 2: CSS CÓ THỂ BỔ SUNG THÊM HOẶC BỔ SUNG FONT TIẾNG VIỆT CHUẨN ('Lora', 'Times New Roman') TRƯỚC CÁC FONT SERIF (Georgia, Garamond...) ĐỂ TRÁNH LỖI PHÂN MẢNH FONT GÂY HỞ/GIÃN KHOẢNG CÁCH CHỮ TRÊN TRÌNH DUYỆT -->
 </head>
 <body>
     <!-- Dịch thuật và tái cấu trúc ngôn ngữ tự nhiên tại đây, bảo toàn thẻ HTML -->

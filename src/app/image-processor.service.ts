@@ -123,7 +123,25 @@ export class ImageProcessorService {
       }
     );
 
+    // 4. Normalize font-family for Vietnamese to prevent disjointed letter-spacing glitch
+    s = this.normalizeVietnameseFonts(s);
+
     return s;
+  }
+
+  normalizeVietnameseFonts(html: string): string {
+    if (!html) return html;
+    // Prepend 'Lora' to any font-family declaration containing Georgia, Garamond, Baskerville, Palatino
+    // because these serif fonts on Windows lack native Vietnamese diacritics, causing severe letter-spacing gaps
+    return html.replace(
+      /font-family\s*:\s*([^;}<"'>]+)/gi,
+      (match, fontList) => {
+        if (/(Georgia|Garamond|Baskerville|Palatino)/i.test(fontList) && !fontList.includes('Lora')) {
+          return `font-family: 'Lora', ${fontList.trim()}`;
+        }
+        return match;
+      }
+    );
   }
 
   attachInteractiveScript(html: string): string {
@@ -133,12 +151,16 @@ export class ImageProcessorService {
   ensureCompleteHtml(html: string): string {
     if (!html) return html;
     
-    // Clean any stray markdown leaks and normalize math delimiters
-    const processedHtml = this.cleanMarkdownAndLatexLeaks(html);
+    // Clean any stray markdown leaks and normalize math delimiters and fonts
+    let processedHtml = this.cleanMarkdownAndLatexLeaks(html);
 
     const hasDocType = /<!DOCTYPE\s+html/i.test(processedHtml);
     const hasHead = /<head[\s>]/i.test(processedHtml);
     const hasBody = /<body[\s>]/i.test(processedHtml);
+
+    // Guard against duplicate injections if html was already processed
+    const alreadyHasMathJax = processedHtml.includes('MathJax') || processedHtml.includes('katex.min.css');
+    const alreadyHasSlideScript = processedHtml.includes('function renderAllMath()');
 
     const fullStyles = this.getSlideStyles();
     const fullScript = this.getSlideScripts();
@@ -148,7 +170,7 @@ export class ImageProcessorService {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- KaTeX CSS & JS for high-speed instant LaTeX formula typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -186,13 +208,16 @@ ${fullStyles}
     // Case 1: Already has <!DOCTYPE html> or <head>
     if (hasDocType || hasHead) {
       let result = processedHtml;
-      if (hasHead) {
+      if (hasHead && !alreadyHasMathJax) {
         result = result.replace(/<head[\s>]/i, match => `${match}\n${mathAndFontHeadTags}\n`);
       }
-      if (hasBody) {
-        result = result.replace(/<\/body>/i, `<script>\n${fullScript}\n</script>\n</body>`);
-      } else {
-        result += `<script>\n${fullScript}\n</script>`;
+      if (!alreadyHasSlideScript) {
+        // Use a function callback () => string so JavaScript does not evaluate $' or $& inside fullScript
+        if (hasBody) {
+          result = result.replace(/<\/body>/i, () => `<script>\n${fullScript}\n</script>\n</body>`);
+        } else {
+          result += `<script>\n${fullScript}\n</script>`;
+        }
       }
       return result;
     }
@@ -202,7 +227,7 @@ ${fullStyles}
     return `<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <title>Slide Bài Giảng Đã Dịch</title>
+  <title>Tài Liệu Đã Dịch</title>
 ${mathAndFontHeadTags}
 </head>
 <body style="margin: 0; padding: 0; background: #f1f5f9; font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased;">
@@ -216,6 +241,34 @@ ${fullScript}
 
   private getSlideStyles(): string {
     return `
+  /* TỐI ƯU TYPOGRAPHY TIẾNG VIỆT & CHỐNG LỖI CÁC CHỮ BỊ TÁCH XA NHAU TRÊN WINDOWS */
+  html, body {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+  }
+
+  @font-face {
+    font-family: 'Georgia';
+    src: local('Lora'), local('Times New Roman');
+    unicode-range: U+0102-0103, U+110-111, U+1EA0-1EF9, U+02C6, U+0300-0301, U+0303, U+0309, U+0323;
+  }
+  @font-face {
+    font-family: 'Garamond';
+    src: local('Lora'), local('Times New Roman');
+    unicode-range: U+0102-0103, U+110-111, U+1EA0-1EF9, U+02C6, U+0300-0301, U+0303, U+0309, U+0323;
+  }
+  @font-face {
+    font-family: 'Baskerville';
+    src: local('Lora'), local('Times New Roman');
+    unicode-range: U+0102-0103, U+110-111, U+1EA0-1EF9, U+02C6, U+0300-0301, U+0303, U+0309, U+0323;
+  }
+  @font-face {
+    font-family: 'Palatino';
+    src: local('Lora'), local('Times New Roman');
+    unicode-range: U+0102-0103, U+110-111, U+1EA0-1EF9, U+02C6, U+0300-0301, U+0303, U+0309, U+0323;
+  }
+
   /* TỰ DO KHÔNG GIAN CHIỀU DỌC & CHIỀU NGANG - TỰ ĐỘNG GIÃN NỞ CHỐNG NUỐT CHỮ */
   .lecture-slides-container {
     display: flex !important;

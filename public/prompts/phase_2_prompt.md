@@ -21,8 +21,9 @@ Hãy gọi lại và áp dụng tuyệt đối **"Hệ thống Thứ tự Ưu ti
 *   **Tài liệu tham khảo (References):** KHÔNG DỊCH các thành phần nhận diện (Tác giả, Tên sách/báo, Tạp chí, DOI, URL...). Giữ nguyên định dạng gốc.
 *   **Hình ảnh:** Thẻ `<img>` phải có `alt` text tiếng Việt có ý nghĩa.
 *   **Tối ưu thiết kế cho màn hình lớn**: Bản dịch cuối cùng có khả năng đọc được trên nhiều kích cỡ màn hình khác nhau, nhưng kích cỡ màn hình lớn (trên laptop/desktop) vẫn là ưu tiên cao nhất.
-*   **Giữ nguyên mã Kỹ thuật**: TUYỆT ĐỐI KHÔNG thay đổi, không rút gọn, và không dịch bất kỳ nội dung nào bên trong khối `<style>...</style>`, thẻ `<script>`, và các thuộc tính class/id của thẻ HTML. Chỉ dịch văn bản hiển thị cho người dùng.
-    *   **Ngoại lệ:** Cho phép bổ sung CSS khi cần (ví dụ làm font chữ nhỏ hơn ở một số chỗ để chống che lấp nhau, v.v..) nếu điều đó chắc chắn giúp cải thiện chất lượng bản dịch cuối cùng.
+*   **Giữ nguyên mã Kỹ thuật & Tối ưu Typography tiếng Việt**: TUYỆT ĐỐI KHÔNG xóa cấu trúc kỹ thuật bên trong <style>...</style>, <script>, class/id.
+    *   **Ngoại lệ Typography bắt buộc:** Nếu tài liệu gốc sử dụng các font chữ không hỗ trợ đầy đủ dấu tiếng Việt (đặc biệt là font serif như Georgia, Garamond, Baskerville, Palatino), hãy tự động bổ sung font serif tiếng Việt chuẩn vào trước danh sách ont-family (ví dụ: đổi ont-family: Georgia, serif; thành ont-family: 'Lora', Georgia, 'Times New Roman', serif;). Điều này ngăn chặn triệt để hiện tượng phân mảnh font trên trình duyệt (chữ có dấu bị nhảy font khiến các chữ cái trong cùng một từ bị cách xa nhau một cách kỳ dị).
+    *   **Ngoại lệ CSS khác:** Cho phép bổ sung CSS khi cần (ví dụ làm font chữ nhỏ hơn ở một số chỗ để chống che lấp nhau, v.v..) nếu điều đó chắc chắn giúp cải thiện chất lượng bản dịch cuối cùng.
 </technical_checklist>
 
 <internal_quality_assurance>

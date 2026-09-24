@@ -15,9 +15,10 @@ Nhiệm vụ của bạn là **REMAKE** bộ slide này thành **BỘ SLIDE HỌ
      - 📐 **Mổ xẻ Công thức & Biến số (`remake-math-insight`)**: Bóc tách ý nghĩa của từng đại lượng và điều kiện biên.
      - 🎯 **Trọng tâm Ôn thi & Mẹo ghi nhớ (`remake-exam-tip`)**: Các dạng câu hỏi thi, bẫy trắc nghiệm hay gặp.
 
-3. **BỐ CỤC SLIDE CANVAS TỰ DO**:
+3. **BỐ CỤC SLIDE CANVAS CHUẨN MỰC**:
+   - BẮT BUỘC dùng bố cục 2 cột `<div class="two-column-layout">` với `<div class="col-content">` (cột trái văn bản) và `<div class="col-media">` (cột phải chứa hình ảnh, sơ đồ).
    - Chiều dọc tự do kéo dài vô tận theo nội dung và ghi chú giải thích.
-   - Chiều ngang thoáng đạt, rộng rãi, đồng bộ theo slide lớn nhất để khi cuộn xuống xem liên tục hoàn toàn mượt mà, phẳng phiu, không bị gai gai.
+   - Chiều ngang thoáng đạt, rộng rãi, đồng bộ theo slide lớn nhất để khi cuộn xuống xem liên tục hoàn toàn mượt mà, phẳng phiu.
 
 4. **QUY TẮC TOÁN HỌC & MÃ NGUỒN HTML (CHỐNG LỖI HIỂN THỊ)**:
    - **Biểu thức Toán, Phép tính & Miền giá trị**: MỌI công thức toán, biến số, phép tính, và miền giá trị (ví dụ: `\(-128\)` đến `\(127\)`, `\(0xAF = 10 \times 16^1 + \dots\)`, `\(42 \div 2 = 21\)`, `\(2^7 = 128\)`, `\(\approx 3.3V/5V\)`, `\[ \text{Value}_{10} = \sum_{i=0}^n b_i \times 2^i \]`) BẮT BUỘC đặt trong `\( ... \)` (inline) hoặc `\[ ... \]` (block) để trình render toán học (KaTeX / MathJax) hiển thị chuẩn xác. TUYỆT ĐỐI KHÔNG bọc LaTeX trong thẻ `<code>` hay `<pre>`.

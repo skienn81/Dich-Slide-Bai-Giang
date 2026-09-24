@@ -104,12 +104,106 @@ Dành cho môn Toán, Lý, Hóa, Kỹ thuật:
 </remake_pedagogical_enrichment>
 
 <slide_canvas_layout>
-### 3. KIẾN TRÚC SLIDE CANVAS TỰ DO CHIỀU DỌC & CHIỀU NGANG
+### 3. KIẾN TRÚC SLIDE CANVAS & KHUNG MẪU HTML BẮT BUỘC (MANDATORY SKELETON)
 
-- Bọc toàn bộ các slide trong container: `<div class="lecture-slides-container">`
-- Mỗi slide là một `<div class="slide-canvas" id="slide-[X]">`.
-- **Chiều dọc tự do kéo dài vô tận**: Slide có bao nhiêu chữ, code, hình vẽ và khối Remake Take-note thì tự nhiên giãn nở chiều dọc thoải mái.
-- **Chiều ngang co giãn đồng bộ**: Chiều ngang thoáng đạt và tự động đồng bộ theo slide lớn nhất trong tài liệu để cuộn trang mượt mà, phẳng phiu, không bị gai góc lệch viền.
+Bọc toàn bộ các slide trong container: `<div class="lecture-slides-container">`
+Mỗi slide là một `<div class="slide-canvas" id="slide-[X]">`.
+
+BẮT BUỘC tuân thủ 100% cấu trúc thẻ và tên class chuẩn mực sau đây cho từng slide:
+
+#### Mẫu 1: Slide Bìa / Giới thiệu (Slide 1):
+```html
+<div class="slide-canvas" id="slide-1">
+  <div class="slide-header">
+    <div class="institution-header">[TÊN TRƯỜNG HOẶC VIỆN &bull; MÃ MÔN TIẾNG ANH]</div>
+    <div class="slide-id-badge">Trang 1/[TỔNG SỐ TRANG]</div>
+  </div>
+  <div class="slide-body title-slide-layout">
+    <div class="logo-box">
+      <!-- Nếu có ảnh logo trường đính kèm thì chèn thẻ <img>, nếu không có ID ảnh thì không sinh thẻ <img> giả -->
+      <img src="[ID_ẢNH]" alt="Logo Trường" class="slide-img hero-logo">
+    </div>
+    <div class="main-title-group">
+      <h2 class="sub-chapter-title">[CHƯƠNG X / HỌC PHẦN X]</h2>
+      <h1 class="chapter-main-title">[TÊN BÀI GIẢNG TIẾNG VIỆT]<br><span class="en-subtitle">([English Title])</span></h1>
+    </div>
+    <div class="instructor-card">
+      <p><strong>Giảng viên / Tác giả:</strong> [Tên giảng viên]</p>
+      <p><strong>Bộ môn / Viện:</strong> [Thông tin khoa, viện]</p>
+      <p><strong>Email / Website:</strong> <code>[email/website nếu có]</code></p>
+      <p class="acknowledgement"><em>[Lời cảm ơn / Học liệu nếu có trong slide gốc]</em></p>
+    </div>
+    <!-- Khối Remake giới thiệu tổng quan -->
+    <div class="remake-card remake-take-note">
+      <div class="remake-card-header">
+        <span class="remake-badge">💡 Giới thiệu Tổng quan Chương học</span>
+        <span class="remake-subtitle">[Ý nghĩa thực tiễn]</span>
+      </div>
+      <div class="remake-card-body">
+        <p>[Tóm lược mục tiêu học tập và ứng dụng thực tế của chương này]</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>[Tên môn học] &bull; [Tên trường]</span>
+    <span>[Tên chương] &bull; 1 / [TỔNG]</span>
+  </div>
+</div>
+```
+
+#### Mẫu 2: Slide Nội dung Bài giảng chuẩn (Slide 2 trở đi):
+```html
+<div class="slide-canvas" id="slide-[X]">
+  <div class="slide-header">
+    <div class="institution-header">[TÊN TRƯỜNG &bull; MÔN HỌC BẰNG TIẾNG ANH]</div>
+    <div class="slide-id-badge">Trang [X]/[TỔNG SỐ TRANG]</div>
+  </div>
+
+  <div class="slide-body">
+    <h2 class="slide-title">[Tiêu đề Slide Tiếng Việt] <span class="en-subtitle">([English Title])</span></h2>
+
+    <!-- BỐ CỤC 2 CỘT CHUẨN MỰC (BẮT BUỘC DÙNG CLASS .two-column-layout) -->
+    <div class="two-column-layout">
+      <!-- Cột trái: Văn bản lý thuyết, công thức & phân tích -->
+      <div class="col-content">
+        <ul class="bullet-list">
+          <li><strong>[Khái niệm/Định nghĩa]:</strong> [Nội dung giải thích chi tiết]
+            <div class="arrow-sub-item">&rarr; [Hệ quả / Kết luận cốt lõi]</div>
+          </li>
+          <li><strong>[Ý tiếp theo]:</strong> [Nội dung dịch chuẩn xác]</li>
+        </ul>
+      </div>
+
+      <!-- Cột phải: Hình ảnh, Sơ đồ, Đồ thị -->
+      <div class="col-media">
+        <div class="media-row">
+          <div class="img-caption-box">
+            <!-- Nếu có ảnh với ID thật trong danh sách: -->
+            <img src="[ID_ẢNH_ĐƯỢC_CẤP]" alt="..." class="slide-img">
+            <span class="caption-label">[Mã hình & Chú thích hình ảnh]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KHỐI REMAKE TAKE-NOTE & CHÚ GIẢI SƯ PHẠM (ĐẶT Ở DƯỚI CÙNG SLIDE) -->
+    <div class="remake-card remake-take-note">
+      <div class="remake-card-header">
+        <span class="remake-badge">💡 Take-note Giảng viên</span>
+        <span class="remake-subtitle">[Góc nhìn thực tế / Bản chất]</span>
+      </div>
+      <div class="remake-card-body">
+        <p>[Phân tích bản chất, ứng dụng thực tế hoặc mẹo thi]</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <span>[Môn học] &bull; [Tên trường]</span>
+    <span>[Tên chương] &bull; [X] / [TỔNG]</span>
+  </div>
+</div>
+```
 </slide_canvas_layout>
 
 <academic_math_and_syntax_rules>

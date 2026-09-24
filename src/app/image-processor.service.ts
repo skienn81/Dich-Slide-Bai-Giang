@@ -243,11 +243,265 @@ ${fullScript}
     overflow: visible !important;
     padding: 16px 32px 24px 32px !important;
   }
-  .slide-body-two-column {
+  /* BỐ CỤC 2 CỘT CHUẨN MỰC & CÁC BIẾN THỂ */
+  .two-column-layout, .grid-2-col, .slide-body-two-column {
     display: grid !important;
-    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr) !important;
-    gap: 32px !important;
+    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr) !important;
+    gap: 28px !important;
     align-items: start !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .col-content, .slide-content-left {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+  }
+
+  .col-media, .slide-content-right, .image-col {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    min-width: 280px !important;
+  }
+
+  .media-row, .img-group {
+    display: flex !important;
+    gap: 12px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+
+  /* Header & Footer */
+  .slide-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .institution-header, .course-tag {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    color: #991b1b !important;
+  }
+
+  .slide-id-badge {
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .slide-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding-top: 14px !important;
+    margin-top: 24px !important;
+    font-size: 0.8rem !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Tiêu đề & Đề mục */
+  .slide-title, .slide-h2 {
+    font-size: 1.75rem !important;
+    font-weight: 800 !important;
+    color: #b91c1c !important;
+    margin-top: 0 !important;
+    margin-bottom: 16px !important;
+    line-height: 1.3 !important;
+  }
+
+  .en-subtitle {
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    color: #64748b !important;
+  }
+
+  .slide-subtitle {
+    font-size: 1rem !important;
+    color: #475569 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .section-indicator {
+    display: inline-block !important;
+    background: #fee2e2 !important;
+    color: #b91c1c !important;
+    font-weight: 800 !important;
+    font-size: 0.75rem !important;
+    padding: 4px 10px !important;
+    border-radius: 4px !important;
+    margin-bottom: 8px !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  /* Danh sách gạch đầu dòng */
+  .bullet-list {
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin: 0 !important;
+  }
+
+  .bullet-list > li {
+    position: relative !important;
+    padding-left: 26px !important;
+    margin-bottom: 14px !important;
+    font-size: 1rem !important;
+    line-height: 1.55 !important;
+    color: #334155 !important;
+  }
+
+  .bullet-list > li::before {
+    content: "■" !important;
+    position: absolute !important;
+    left: 4px !important;
+    color: #b91c1c !important;
+    font-size: 0.85rem !important;
+    top: 1px !important;
+  }
+
+  .sub-bullet-list {
+    list-style: none !important;
+    padding-left: 20px !important;
+    margin-top: 8px !important;
+  }
+
+  .sub-bullet-list > li {
+    position: relative !important;
+    padding-left: 18px !important;
+    margin-bottom: 8px !important;
+    font-size: 0.92rem !important;
+    color: #475569 !important;
+  }
+
+  .sub-bullet-list > li::before {
+    content: "–" !important;
+    position: absolute !important;
+    left: 0 !important;
+    color: #64748b !important;
+  }
+
+  .arrow-sub-item, .indent-arrow {
+    color: #0369a1 !important;
+    font-weight: 600 !important;
+    margin-top: 4px !important;
+    font-size: 0.95rem !important;
+  }
+
+  .img-caption-box {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .caption-label {
+    font-size: 0.78rem !important;
+    color: #64748b !important;
+    margin-top: 6px !important;
+    font-weight: 500 !important;
+  }
+
+  .hero-logo, .univ-logo {
+    max-height: 110px !important;
+    width: auto !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* Title Slide & Instructor Card */
+  .title-slide-layout, .slide-title-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 20px 0 !important;
+    width: 100% !important;
+  }
+
+  .chapter-main-title, .main-title {
+    font-size: 2.2rem !important;
+    font-weight: 900 !important;
+    color: #991b1b !important;
+    margin: 12px 0 20px 0 !important;
+  }
+
+  .sub-chapter-title, .sub-title {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #dc2626 !important;
+    margin: 0 !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .instructor-card, .meta-info {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 18px 30px !important;
+    max-width: 650px !important;
+    width: 100% !important;
+    margin: 16px auto !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+  }
+
+  .instructor-card p, .meta-info p {
+    margin: 4px 0 !important;
+  }
+
+  .acknowledgement, .acknowledgment {
+    font-size: 0.8rem !important;
+    color: #64748b !important;
+    border-top: 1px dashed #cbd5e1 !important;
+    padding-top: 8px !important;
+    margin-top: 8px !important;
+  }
+
+  .take-note-box {
+    margin: 16px 0 !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    background: #fefce8 !important;
+    border: 1px solid #fef08a !important;
+    border-left: 5px solid #eab308 !important;
+    color: #713f12 !important;
+  }
+
+  .take-note-box.alert-success {
+    background: #f0fdf4 !important;
+    border-color: #bbf7d0 !important;
+    border-left-color: #16a34a !important;
+    color: #14532d !important;
+  }
+
+  /* Responsive for Mobile/Tablet */
+  @media (max-width: 820px) {
+    .two-column-layout, .grid-2-col, .slide-body-two-column {
+      grid-template-columns: 1fr !important;
+      gap: 20px !important;
+    }
+    .col-media, .slide-content-right, .image-col {
+      min-width: 100% !important;
+    }
   }
 
   /* KHẮC PHỤC CHÈN ÉP DÒNG BULLET & CÔNG THỨC TOÁN */

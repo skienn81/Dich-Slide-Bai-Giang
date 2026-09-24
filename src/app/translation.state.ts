@@ -6,6 +6,7 @@ import { DbService } from './db.service';
 import { StorageService, TranslatedDoc } from './storage.service';
 import { PromptService } from './prompt.service';
 import { ImageProcessorService, ExtractedImage } from './image-processor.service';
+import { AVAILABLE_MODELS, ModelOption, getModelInfo } from './model-config';
 
 export type TranslationMode = 'lecture_slide' | 'zero_svg' | 'zero_math' | 'normal' | 'phase1' | 'phase2';
 export type SearchModel = 'gemini-3.1-flash-lite' | 'gemini-3.8-flash' | 'gemini-flash-lite-latest' | 'gemini-flash-latest';
@@ -26,12 +27,8 @@ export class TranslationState {
 
   readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   readonly MAX_FILE_SIZE_HTML = 0.5 * 1024 * 1024; // 500KB
-  readonly MAX_PDF_TOKENS_FLASH = 80000;
-  readonly MAX_PDF_TOKENS_PRO = 30000;
-  readonly MAX_HTML_TOKENS_FLASH = 120000;
-  readonly MAX_HTML_TOKENS_PRO = 35000;
 
-  selectedModel = signal<'gemini-3.8-flash' | 'gemini-pro-latest'>('gemini-3.8-flash');
+  selectedModel = signal<string>('gemini-3.8-flash');
   selectedFile = signal<File | null>(null);
   fileBase64 = signal<string | null>(null);
   mimeType = signal<string>('');
@@ -66,11 +63,11 @@ export class TranslationState {
   isPdfUploaded = computed(() => this.mimeType() === 'application/pdf');
   isHtmlUploaded = computed(() => this.mimeType() === 'text/html');
   currentMaxTokens = computed(() => {
-    const isFlash = this.selectedModel() === 'gemini-3.8-flash';
+    const info = getModelInfo(this.selectedModel());
     if (this.mimeType() === 'text/html') {
-      return isFlash ? this.MAX_HTML_TOKENS_FLASH : this.MAX_HTML_TOKENS_PRO;
+      return info.maxHtmlTokens;
     }
-    return isFlash ? this.MAX_PDF_TOKENS_FLASH : this.MAX_PDF_TOKENS_PRO;
+    return info.maxPdfTokens;
   });
   hasFile = computed(() => this.selectedFile() !== null);
   hasOriginalFile = computed(() => {
@@ -302,10 +299,11 @@ export class TranslationState {
       this.tokenCount.set(tokens);
       const maxTokens = this.currentMaxTokens();
       if (tokens > maxTokens) {
-        if (this.selectedModel() !== 'gemini-3.8-flash') {
-          this.showToast('error', `Tài liệu có ${tokens.toLocaleString()} tokens (vượt trần ${maxTokens.toLocaleString()} của bản Pro). Bạn hãy chuyển sang mô hình Gemini 3.8 Flash ở thanh công cụ để nâng giới hạn lên 80.000 tokens hoặc dùng tính năng "Cắt trang".`);
+        const info = getModelInfo(this.selectedModel());
+        if (info.category === 'pro') {
+          this.showToast('error', `Tài liệu có ${tokens.toLocaleString()} tokens (vượt trần ${maxTokens.toLocaleString()} của bản Pro). Bạn hãy chuyển sang mô hình Flash (Gemini 2.5 Flash / 3.8 Flash) ở thanh công cụ để nâng giới hạn lên 80.000 tokens hoặc dùng tính năng "Cắt trang".`);
         } else {
-          this.showToast('error', `Lỗi: Nội dung vượt quá giới hạn ${maxTokens.toLocaleString()} tokens (${tokens.toLocaleString()} tokens). Vui lòng dùng tính năng "Cắt trang" để dịch theo từng phần.`);
+          this.showToast('error', `Lỗi: Nội dung vượt quá giới hạn ${maxTokens.toLocaleString()} tokens của mô hình ${info.name} (${tokens.toLocaleString()} tokens). Vui lòng dùng tính năng "Cắt trang" để dịch theo từng phần.`);
         }
       }
     } catch (e: unknown) {
@@ -318,6 +316,66 @@ export class TranslationState {
 
   async loadPrompt(filename: string): Promise<string> {
     return this.promptService.loadPrompt(filename);
+  }
+
+  private async translatePdfWithFallback(
+    base64: string,
+    mime: string,
+    prompt: string,
+    instruction: string,
+    useSearch: boolean,
+    extractedImages: ExtractedImage[]
+  ) {
+    const currentModel = this.selectedModel();
+    try {
+      return await this.geminiService.translate(base64, mime, prompt, instruction, useSearch, currentModel, extractedImages);
+    } catch (e: unknown) {
+      const parsedError = this.geminiService.parseGeminiError(e);
+      const isHighDemand = parsedError.includes('503') || 
+                           parsedError.toLowerCase().includes('overloaded') || 
+                           parsedError.toLowerCase().includes('high demand');
+      
+      // Auto-fallback if Flash 3.8 experiences high demand/overload
+      if (isHighDemand && currentModel === 'gemini-3.8-flash') {
+        const fallback = 'gemini-2.5-flash';
+        this.showToast('info', 'Mô hình Flash 3.8 đang tăng tải đột biến. Đang tự động chuyển sang Gemini 2.5 Flash để tiếp tục ngay...');
+        this.selectedModel.set(fallback);
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('sila_pdf_translator_selected_model', fallback);
+        }
+        return await this.geminiService.translate(base64, mime, prompt, instruction, useSearch, fallback, extractedImages);
+      }
+      throw e;
+    }
+  }
+
+  private async translateHtmlWithFallback(
+    htmlContent: string,
+    prompt: string,
+    instruction: string,
+    useSearch: boolean,
+    images: {id: string, dataUrl: string}[]
+  ) {
+    const currentModel = this.selectedModel();
+    try {
+      return await this.geminiService.translateHtml(htmlContent, prompt, instruction, useSearch, currentModel, images);
+    } catch (e: unknown) {
+      const parsedError = this.geminiService.parseGeminiError(e);
+      const isHighDemand = parsedError.includes('503') || 
+                           parsedError.toLowerCase().includes('overloaded') || 
+                           parsedError.toLowerCase().includes('high demand');
+      
+      if (isHighDemand && currentModel === 'gemini-3.8-flash') {
+        const fallback = 'gemini-2.5-flash';
+        this.showToast('info', 'Mô hình Flash 3.8 đang tăng tải đột biến. Đang tự động chuyển sang Gemini 2.5 Flash để tiếp tục ngay...');
+        this.selectedModel.set(fallback);
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('sila_pdf_translator_selected_model', fallback);
+        }
+        return await this.geminiService.translateHtml(htmlContent, prompt, instruction, useSearch, fallback, images);
+      }
+      throw e;
+    }
   }
 
   async processFile() {
@@ -362,7 +420,7 @@ export class TranslationState {
             this.loadPrompt('remake_slide_system_instructions.md'),
             this.loadPrompt('remake_slide_prompt.md')
           ]);
-          const result = await this.geminiService.translate(base64, mime, prompt, instruction, this.useGoogleSearch(), this.selectedModel(), extractedImages);
+          const result = await this.translatePdfWithFallback(base64, mime, prompt, instruction, this.useGoogleSearch(), extractedImages);
           this.lastTranslationUsageMetadata = result.usageMetadata;
           const rawHtml = this.imageProcessorService.extractHtml(result.text);
           this.resultHtml.set(this.imageProcessorService.postProcessHtml(rawHtml, extractedImages));
@@ -372,7 +430,7 @@ export class TranslationState {
             this.loadPrompt('lecture_slide_system_instructions.md'),
             this.loadPrompt('lecture_slide_prompt.md')
           ]);
-          const result = await this.geminiService.translate(base64, mime, prompt, instruction, this.useGoogleSearch(), this.selectedModel(), extractedImages);
+          const result = await this.translatePdfWithFallback(base64, mime, prompt, instruction, this.useGoogleSearch(), extractedImages);
           this.lastTranslationUsageMetadata = result.usageMetadata;
           const rawHtml = this.imageProcessorService.extractHtml(result.text);
           this.resultHtml.set(this.imageProcessorService.postProcessHtml(rawHtml, extractedImages));
@@ -384,7 +442,7 @@ export class TranslationState {
           this.loadPrompt('zero_math_system_instructions.md'),
           this.loadPrompt('zero_math_prompt.md')
         ]);
-        const result = await this.geminiService.translate(base64, mime, prompt, instruction, this.useGoogleSearch(), this.selectedModel(), extractedImages);
+        const result = await this.translatePdfWithFallback(base64, mime, prompt, instruction, this.useGoogleSearch(), extractedImages);
         this.lastTranslationUsageMetadata = result.usageMetadata;
         const rawHtml = this.imageProcessorService.extractHtml(result.text);
         this.resultHtml.set(this.imageProcessorService.postProcessHtml(rawHtml, extractedImages));
@@ -395,7 +453,7 @@ export class TranslationState {
           this.loadPrompt('zero_svg_system_instructions.md'),
           this.loadPrompt('zero_svg_prompt.md')
         ]);
-        const result = await this.geminiService.translate(base64, mime, prompt, instruction, this.useGoogleSearch(), this.selectedModel(), extractedImages);
+        const result = await this.translatePdfWithFallback(base64, mime, prompt, instruction, this.useGoogleSearch(), extractedImages);
         this.lastTranslationUsageMetadata = result.usageMetadata;
         const rawHtml = this.imageProcessorService.extractHtml(result.text);
         this.resultHtml.set(this.imageProcessorService.postProcessHtml(rawHtml, extractedImages));
@@ -406,7 +464,7 @@ export class TranslationState {
           this.loadPrompt('math_system_instructions.md'),
           this.loadPrompt('math_prompt.md')
         ]);
-        const result = await this.geminiService.translate(base64, mime, prompt, instruction, this.useGoogleSearch(), this.selectedModel(), extractedImages);
+        const result = await this.translatePdfWithFallback(base64, mime, prompt, instruction, this.useGoogleSearch(), extractedImages);
         this.lastTranslationUsageMetadata = result.usageMetadata;
         const rawHtml = this.imageProcessorService.extractHtml(result.text);
         this.resultHtml.set(this.imageProcessorService.postProcessHtml(rawHtml, extractedImages));
@@ -417,7 +475,7 @@ export class TranslationState {
           this.loadPrompt('phase_1_system_instructions.md'),
           this.loadPrompt('phase_1_prompt.md')
         ]);
-        const result = await this.geminiService.translate(base64, mime, prompt, instruction, false, this.selectedModel(), extractedImages);
+        const result = await this.translatePdfWithFallback(base64, mime, prompt, instruction, false, extractedImages);
         this.lastTranslationUsageMetadata = result.usageMetadata;
         const rawHtml = this.imageProcessorService.extractHtml(result.text);
         this.resultHtml.set(this.imageProcessorService.postProcessHtml(rawHtml, extractedImages));
@@ -434,7 +492,7 @@ export class TranslationState {
         ]);
         
         const htmlContent = base64;
-        const result = await this.geminiService.translateHtml(htmlContent, prompt, instruction, this.useGoogleSearch(), this.selectedModel(), this.htmlExtractedImages());
+        const result = await this.translateHtmlWithFallback(htmlContent, prompt, instruction, this.useGoogleSearch(), this.htmlExtractedImages());
         this.lastTranslationUsageMetadata = result.usageMetadata;
         const rawHtml = this.imageProcessorService.extractHtml(result.text);
         this.resultHtml.set(this.imageProcessorService.postProcessHtml(rawHtml, this.htmlExtractedImages()));
@@ -451,16 +509,18 @@ export class TranslationState {
       
     } catch (e: unknown) {
       const parsedError = this.geminiService.parseGeminiError(e);
+      const currentModelName = getModelInfo(this.selectedModel()).name;
       
       if (parsedError.includes('429') || parsedError.toLowerCase().includes('quota')) {
-        if (this.selectedModel() !== 'gemini-3.8-flash') {
-          this.showToast('error', 'Lỗi 429: Bản Pro đã bị quá hạn mức yêu cầu (Rate Limit). Vui lòng chuyển sang mô hình Gemini 3.8 Flash ở thanh tiêu đề (hạn mức TPM cao hơn gấp hàng chục lần) để tiếp tục ngay.');
+        const info = getModelInfo(this.selectedModel());
+        if (info.category === 'pro') {
+          this.showToast('error', 'Lỗi 429: Bản Pro đã bị quá hạn mức yêu cầu (Rate Limit). Vui lòng chuyển sang mô hình Flash (Gemini 2.5 Flash / 3.8 Flash) ở thanh tiêu đề (hạn mức TPM cao hơn nhiều) để tiếp tục ngay.');
         } else {
-          this.showToast('error', 'Lỗi: API Key của bạn đã vượt quá giới hạn (Quota exceeded). Sử dụng API Key khác để tiếp tục ngay hoặc đợi sang ngày hôm sau.');
+          this.showToast('error', 'Lỗi: API Key của bạn đã vượt quá giới hạn (Quota exceeded). Thử chuyển sang mô hình Flash khác trên thanh tiêu đề hoặc đợi sang ngày hôm sau.');
         }
       } 
       else if (parsedError.includes('503') || parsedError.toLowerCase().includes('overloaded') || parsedError.toLowerCase().includes('high demand')) {
-        this.showToast('error', 'Lỗi: Máy chủ mô hình đang có lượng truy cập tăng đột biến (High demand/Overloaded). Vui lòng thử lại sau vài giây hoặc chuyển sang tab Pro.');
+        this.showToast('error', `Lỗi: Mô hình ${currentModelName} đang có lượng truy cập tăng đột biến (High demand/Overloaded). Bạn hãy bấm vào nút chọn mô hình ở trên đầu và chuyển sang Flash khác (như Gemini 2.5 Flash) để dịch tiếp ngay!`);
       }
       else if (parsedError.toLowerCase().includes('safety') || parsedError.toLowerCase().includes('blocked')) {
         this.showToast('error', 'Lỗi: Tài liệu bị từ chối do vi phạm chính sách an toàn của Google.');

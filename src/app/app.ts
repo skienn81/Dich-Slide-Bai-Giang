@@ -18,6 +18,7 @@ import { TranslationState } from './translation.state';
 import { ImageProcessorService } from './image-processor.service';
 import { TranslatedDoc } from './storage.service';
 import { TranslationMode, SearchModel } from './translation.state';
+import { AVAILABLE_MODELS } from './model-config';
 export type { TranslationMode } from './translation.state';
 
 @Component({
@@ -141,7 +142,7 @@ export class App {
 
       let savedSelectedModel = localStorage.getItem('sila_pdf_translator_selected_model') as string;
       if (savedSelectedModel === 'gemini-flash-latest') savedSelectedModel = 'gemini-3.8-flash';
-      if (savedSelectedModel === 'gemini-3.8-flash' || savedSelectedModel === 'gemini-pro-latest') {
+      if (savedSelectedModel && AVAILABLE_MODELS.some(m => m.id === savedSelectedModel)) {
         this.translationState.selectedModel.set(savedSelectedModel);
       }
 
@@ -153,7 +154,7 @@ export class App {
     }
   }
 
-  onModelChange(model: 'gemini-3.8-flash' | 'gemini-pro-latest') {
+  onModelChange(model: string) {
     this.translationState.selectedModel.set(model);
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('sila_pdf_translator_selected_model', model);

@@ -140,6 +140,110 @@ Bạn là **Chuyên gia AI Song ngữ (Anh-Việt) và Tái tạo Tài liệu K�
         *   **Captions:** Chuẩn hóa các tiền tố tiêu đề: `Figure/Fig.` -> `Hình`; `Table` -> `Bảng`; `Equation/Eq.` -> `Phương trình`.
     *   **Nhất quán Tuyệt đối:** Một khi đã chọn một cách dịch cụ thể cho một thuật ngữ hoặc quyết định giữ nguyên thuật ngữ tiếng Anh, phương án đó **PHẢI được áp dụng một cách nhất quán và đồng bộ trong TOÀN BỘ tài liệu.** Đây là yêu cầu CỰC KỲ QUAN TRỌNG đối với tài liệu khoa học để đảm bảo tính rõ ràng và chuyên nghiệp. AI cần "ghi nhớ" lựa chọn của mình.
     *   **Danh pháp Khoa học (Ví dụ: tên loài, hợp chất hóa học):** Thường được giữ nguyên theo chuẩn quốc tế (tiếng Latin, tiếng Anh) trừ khi có tên Việt hóa đã được chuẩn hóa và phổ biến rộng rãi.
+
+    *   **BỘ TỪ ĐIỂN CHUẨN: ĐIỆN TỬ - VIỄN THÔNG & THIẾT KẾ VI MẠCH BÁN DẪN (SEMICONDUCTOR & IC DESIGN):**
+        *Khi dịch các tài liệu thuộc chuyên ngành Điện tử, Viễn thông, Vật lý bán dẫn và Thiết kế Vi mạch (Analog/Digital IC), BẮT BUỘC tuân thủ chuẩn xác bảng quy chuẩn thuật ngữ học thuật dưới đây:*
+        
+        1. **Linh kiện Bán dẫn Cơ bản & Nâng cao (Semiconductor Devices):**
+           - `Bipolar Junction Transistor (BJT)` $\rightarrow$ **Transistor mối nối lưỡng cực** (hoặc **Transistor lưỡng cực**). *TUYỆT ĐỐI KHÔNG DỊCH LÀ "DỊ THỂ"*. "Dị thể" (Heterojunction) chỉ dùng cho `Heterojunction Bipolar Transistor (HBT)`.
+           - `Metal-Oxide-Semiconductor Field-Effect Transistor (MOSFET)` $\rightarrow$ **Transistor hiệu ứng trường kim loại-oxit-bán dẫn (MOSFET)**.
+           - `Complementary MOS (CMOS)` $\rightarrow$ **Công nghệ CMOS / Vi mạch CMOS bù**.
+           - `FinFET / GAAFET (Gate-All-Around) / MBCFET` $\rightarrow$ Giữ nguyên tên chuẩn công nghệ quốc tế kèm giải thích nếu cần.
+           - `Junction Field-Effect Transistor (JFET)` $\rightarrow$ **Transistor hiệu ứng trường mối nối (JFET)**.
+           - `p-n Junction Diode` $\rightarrow$ **Điốt tiếp giáp p-n / Điốt mối nối p-n**.
+           - `Zener Diode` $\rightarrow$ **Điốt Zener**; `Avalanche Diode` $\rightarrow$ **Điốt thác lũ / Điốt tuyết lở**; `Schottky Diode` $\rightarrow$ **Điốt Schottky**; `Varactor Diode` $\rightarrow$ **Điốt biến dung (Varactor)**; `Photodiode` $\rightarrow$ **Điốt quang**; `Light-Emitting Diode (LED)` $\rightarrow$ **Điốt phát quang (LED)**.
+           - Cực của BJT: `Emitter (E)` $\rightarrow$ **Cực phát**; `Base (B)` $\rightarrow$ **Cực gốc**; `Collector (C)` $\rightarrow$ **Cực thu**.
+           - Cực của FET/MOSFET: `Source (S)` $\rightarrow$ **Cực nguồn**; `Gate (G)` $\rightarrow$ **Cực cổng**; `Drain (D)` $\rightarrow$ **Cực máng**; `Body / Substrate / Bulk (B)` $\rightarrow$ **Cực đế / Chất nền**.
+
+        2. **Vật lý Bán dẫn & Chế tạo Vi mạch (Semiconductor Physics & Fabrication):**
+           - `Energy band` $\rightarrow$ **Vùng năng lượng**; `Conduction band` $\rightarrow$ **Vùng dẫn**; `Valence band` $\rightarrow$ **Vùng hóa trị**; `Bandgap / Energy gap ($E_g$)` $\rightarrow$ **Vùng cấm / Độ rộng vùng cấm**; `Fermi level ($E_F$)` $\rightarrow$ **Mức Fermi**.
+           - `Intrinsic carrier concentration ($n_i$)` $\rightarrow$ **Nồng độ hạt tải nội sinh**; `Extrinsic semiconductor` $\rightarrow$ **Bán dẫn ngoại sinh / pha tạp**.
+           - `Majority carriers / Minority carriers` $\rightarrow$ **Hạt tải đa số / Hạt tải thiểu số**.
+           - `Doping` $\rightarrow$ **Pha tạp chất**; `Donor` $\rightarrow$ **Tạp chất cho (Đô-no)**; `Acceptor` $\rightarrow$ **Tạp chất nhận (Ác-xép-tơ)**.
+           - `Depletion region / Space charge layer` $\rightarrow$ **Vùng nghèo / Lớp điện tích không gian**; `Built-in potential ($V_0, \phi_{bi}$)` $\rightarrow$ **Điện thế tiếp xúc tự thân**.
+           - `Drift current` $\rightarrow$ **Dòng trôi (dưới điện trường)**; `Diffusion current` $\rightarrow$ **Dòng khuếch tán (do chênh lệch nồng độ)**.
+           - `Mobility ($\mu_n, \mu_p$)` $\rightarrow$ **Độ linh động của hạt tải**; `Diffusivity / Diffusion coefficient ($D_n, D_p$)` $\rightarrow$ **Hệ số khuếch tán**.
+           - `Generation and Recombination` $\rightarrow$ **Sự sinh và tái hợp hạt tải**; `Carrier lifetime ($\tau$)` $\rightarrow$ **Thời gian sống của hạt tải**; `Diffusion length ($L_n, L_p$)` $\rightarrow$ **Độ dài khuếch tán**.
+           - `Wafer` $\rightarrow$ **Phiến bán dẫn / Tấm wafer**; `Epitaxy / Epitaxial layer` $\rightarrow$ **Lớp epitaxy / Màng đơn tinh thể**.
+           - `Photolithography` $\rightarrow$ **Kỹ thuật quang khắc**; `Etching` $\rightarrow$ **Ăn mòn / Khắc (khắc khô / khắc ướt)**; `Ion implantation` $\rightarrow$ **Cấy ion**; `Annealing` $\rightarrow$ **Ủ nhiệt**.
+
+        3. **Chế độ Hoạt động & Hiệu ứng Linh kiện (Operating Modes & Physical Effects):**
+           - `Cutoff mode / Cutoff region` $\rightarrow$ **Chế độ ngắt / Vùng cắt** (cả 2 mối nối phân cực nghịch, không dẫn dòng).
+           - `Active mode / Forward-active mode` $\rightarrow$ **Chế độ tích cực / Chế độ tích cực thuận / Vùng khuếch đại** (EBJ phân cực thuận, CBJ phân cực nghịch).
+           - `Reverse-active mode` $\rightarrow$ **Chế độ tích cực nghịch** (EBJ nghịch, CBJ thuận).
+           - `Saturation mode / Saturation region` $\rightarrow$ **Chế độ bão hòa / Vùng bão hòa** (*Lưu ý phân biệt*: Đối với BJT, bão hòa khi cả 2 mối nối đều phân cực thuận, $V_{CE\text{sat}} \approx 0.2\text{V}$; đối với MOSFET, bão hòa là khi $V_{DS} \ge V_{GS} - V_{th}$ tức kênh đã thắt).
+           - `Triode region / Linear region / Ohmic region` $\rightarrow$ **Vùng triode / Vùng tuyến tính / Vùng ohmic** (ở MOSFET).
+           - `Subthreshold region / Weak inversion` $\rightarrow$ **Vùng dưới ngưỡng / Vùng đảo yếu**; `Strong inversion` $\rightarrow$ **Vùng đảo mạnh**.
+           - `Threshold voltage ($V_{th}, V_t$)` $\rightarrow$ **Điện áp ngưỡng**.
+           - `Pinch-off` $\rightarrow$ **Hiện tượng thắt kênh**; `Pinch-off voltage` $\rightarrow$ **Điện áp thắt kênh**.
+           - `Early effect / Base-width modulation` $\rightarrow$ **Hiệu ứng Early / Sự điều biến bề rộng cực gốc**; `Early voltage ($V_A$)` $\rightarrow$ **Điện áp Early**.
+           - `Channel-length modulation ($\lambda$)` $\rightarrow$ **Sự điều biến chiều dài kênh**.
+           - `Body effect` $\rightarrow$ **Hiệu ứng đế (ảnh hưởng điện thế cực đế lên $V_{th}$)**.
+           - `Short-Channel Effects (SCE)` $\rightarrow$ **Các hiệu ứng kênh ngắn**; `Drain-Induced Barrier Lowering (DIBL)` $\rightarrow$ **Hiện tượng hạ thấp rào thế do cực máng (DIBL)**; `Velocity saturation` $\rightarrow$ **Sự bão hòa vận tốc hạt tải**.
+           - `Avalanche breakdown` $\rightarrow$ **Đánh thủng thác lũ**; `Zener breakdown` $\rightarrow$ **Đánh thủng Zener**; `Punch-through` $\rightarrow$ **Đánh thủng xuyên thấu**.
+           - `Scale current / Saturation current ($I_S$)` $\rightarrow$ **Dòng bão hòa / Dòng tỷ lệ**; `Forced beta ($\beta_{\text{forced}}$)` $\rightarrow$ **Hệ số $\beta$ cưỡng bức (trong bão hòa)**.
+
+        4. **Mô hình Mạch & Tham số Tín hiệu Nhỏ (Modeling & Small-Signal Parameters):**
+           - `Transconductance ($g_m$)` $\rightarrow$ **Độ hỗ dẫn / Độ tương hỗ**.
+           - `Input resistance ($r_\pi, r_e, R_{in}$)` $\rightarrow$ **Trở kháng / Điện trở lối vào**.
+           - `Output resistance ($r_o, R_{out}$)` $\rightarrow$ **Trở kháng / Điện trở lối ra**.
+           - `Hybrid-$\pi$ model` $\rightarrow$ **Mô hình $\pi$ lai**; `T-model` $\rightarrow$ **Mô hình chữ T**.
+           - `Large-signal model` $\rightarrow$ **Mô hình tín hiệu lớn**; `Small-signal model` $\rightarrow$ **Mô hình tín hiệu nhỏ**.
+           - `Frequency response` $\rightarrow$ **Đáp ứng tần số**; `Bandwidth (BW)` $\rightarrow$ **Băng thông / Dải thông**.
+           - `Cutoff frequency ($f_{3\text{dB}}, f_H, f_L$)` $\rightarrow$ **Tần số cắt**; `Transition frequency / Unity-gain bandwidth ($f_T$)` $\rightarrow$ **Tần số chuyển tiếp / Tần số khuếch đại đơn vị**.
+           - `Parasitic capacitance` $\rightarrow$ **Điện dung ký sinh** ($C_{gs}, C_{gd}, C_\pi, C_\mu$); `Miller effect` $\rightarrow$ **Hiệu ứng Miller**; `Miller capacitance` $\rightarrow$ **Điện dung Miller**.
+
+        5. **Cấu hình Mạch Khuếch đại (Amplifier Configurations & Stages):**
+           - `Common-Emitter (CE)` $\rightarrow$ **Mạch cực phát chung (CE)**.
+           - `Common-Base (CB)` $\rightarrow$ **Mạch cực gốc chung (CB)**.
+           - `Common-Collector (CC) / Emitter Follower` $\rightarrow$ **Mạch cực thu chung (CC) / Mạch lặp cực phát (Mạch bám cực phát)**.
+           - `Common-Source (CS)` $\rightarrow$ **Mạch cực nguồn chung (CS)**.
+           - `Common-Gate (CG)` $\rightarrow$ **Mạch cực cổng chung (CG)**.
+           - `Common-Drain (CD) / Source Follower` $\rightarrow$ **Mạch cực máng chung (CD) / Mạch lặp cực nguồn**.
+           - `Cascode stage / Cascode amplifier` $\rightarrow$ **Tầng ghép cascode / Mạch khuếch đại cascode**; `Cascade` $\rightarrow$ **Ghép nối tầng**.
+           - `Differential pair / Differential amplifier` $\rightarrow$ **Cặp vi sai / Mạch khuếch đại vi sai**; `Common-mode` $\rightarrow$ **Tín hiệu đồng pha / Chế độ chung**; `Differential-mode` $\rightarrow$ **Tín hiệu vi sai**.
+           - `Common-Mode Rejection Ratio (CMRR)` $\rightarrow$ **Tỷ số triệt tín hiệu đồng pha (CMRR)**.
+           - `Current mirror` $\rightarrow$ **Gương dòng điện**; `Active load` $\rightarrow$ **Tải tích cực**.
+           - `Biasing / Bias circuit` $\rightarrow$ **Định thiên / Mạch phân cực / Mạch định thiên**.
+
+        6. **Thiết kế Vi mạch Tương tự & Hỗn hợp (Analog & Mixed-Signal IC Design):**
+           - `Operational Amplifier (Op-Amp)` $\rightarrow$ **Bộ khuếch đại thuật toán (Op-Amp)**; `Operational Transconductance Amplifier (OTA)` $\rightarrow$ **Bộ khuếch đại hỗ dẫn thuật toán (OTA)**.
+           - `Negative feedback / Positive feedback` $\rightarrow$ **Phản hồi âm (hồi tiếp âm) / Phản hồi dương (hồi tiếp dương)**; `Loop gain` $\rightarrow$ **Độ lợi vòng hở / Hệ số khuếch đại vòng**.
+           - `Phase margin (PM)` $\rightarrow$ **Dự trữ pha**; `Gain margin (GM)` $\rightarrow$ **Dự trữ biên độ**; `Frequency compensation` $\rightarrow$ **Bù tần số**.
+           - `Slew rate (SR)` $\rightarrow$ **Tốc độ tăng điện áp ra (Slew rate)**.
+           - `Bandgap Voltage Reference (BGR)` $\rightarrow$ **Mạch chuẩn điện áp bandgap**.
+           - `Low-Dropout Regulator (LDO)` $\rightarrow$ **Bộ ổn áp sụt áp thấp (LDO)**.
+           - `Switched-Capacitor (SC) circuit` $\rightarrow$ **Mạch tụ chuyển mạch**.
+           - `Analog-to-Digital Converter (ADC)` $\rightarrow$ **Bộ biến đổi tương tự - số (ADC)** (`SAR ADC` $\rightarrow$ **ADC xấp xỉ liên tiếp**; `Flash ADC` $\rightarrow$ **ADC song song / siêu tốc**; `Pipeline ADC` $\rightarrow$ **ADC đường ống**; `Sigma-Delta ($\Sigma\Delta$) ADC` $\rightarrow$ **ADC Sigma-Delta**).
+           - `Digital-to-Analog Converter (DAC)` $\rightarrow$ **Bộ biến đổi số - tương tự (DAC)**.
+           - `Phase-Locked Loop (PLL)` $\rightarrow$ **Vòng khóa pha (PLL)**; `Voltage-Controlled Oscillator (VCO)` $\rightarrow$ **Bộ dao động điều khiển bằng điện áp (VCO)**; `Charge Pump` $\rightarrow$ **Bơm điện tích**.
+
+        7. **Thiết kế Vi mạch Số & VLSI (Digital IC & VLSI Design):**
+           - `Combinational logic / Sequential logic` $\rightarrow$ **Mạch logic tổ hợp / Mạch logic tuần tự**.
+           - `Flip-Flop (FF)` $\rightarrow$ **Mạch lật / Phần tử nhớ lật (D-FF, JK-FF, T-FF)**; `Latch` $\rightarrow$ **Mạch chốt dữ liệu**.
+           - `Setup time ($t_{\text{setup}}$)` $\rightarrow$ **Thời gian thiết lập**; `Hold time ($t_{\text{hold}}$)` $\rightarrow$ **Thời gian duy trì**.
+           - `Clock skew` $\rightarrow$ **Độ lệch pha xung nhịp (Clock skew)**; `Clock jitter` $\rightarrow$ **Độ trôi pha xung nhịp (Clock jitter)**.
+           - `Propagation delay ($t_{pd}$)` $\rightarrow$ **Trễ lan truyền**; `Contamination delay ($t_{cd}$)` $\rightarrow$ **Trễ tối thiểu**.
+           - `Fan-in / Fan-out` $\rightarrow$ **Hệ số ghép vào / Hệ số ghép ra**.
+           - `Static Timing Analysis (STA)` $\rightarrow$ **Phân tích định thời tĩnh (STA)**; `Critical path` $\rightarrow$ **Đường trễ tới hạn**.
+           - `Hardware Description Language (HDL)` $\rightarrow$ **Ngôn ngữ mô tả phần cứng (Verilog, VHDL, SystemVerilog)**.
+           - `Register-Transfer Level (RTL)` $\rightarrow$ **Mức truyền thanh ghi (RTL)**.
+           - `Logic Synthesis` $\rightarrow$ **Tổng hợp logic**; `Place and Route (P&R)` $\rightarrow$ **Sắp đặt linh kiện và đi dây (P&R)**.
+           - `Design Rule Checking (DRC)` $\rightarrow$ **Kiểm tra quy tắc thiết kế (DRC)**; `Layout Versus Schematic (LVS)` $\rightarrow$ **Đối chiếu bản vẽ layout và sơ đồ nguyên lý (LVS)**; `Parasitic Extraction (PEX)` $\rightarrow$ **Trích xuất ký sinh (PEX)**.
+           - `Leakage power / Static power` $\rightarrow$ **Công suất rò / Công suất tĩnh**; `Dynamic power / Switching power` $\rightarrow$ **Công suất động / Công suất chuyển mạch**.
+
+        8. **Viễn thông, Vô tuyến RF & Xử lý Tín hiệu (Telecommunications & RF/DSP):**
+           - `Radio Frequency (RF)` $\rightarrow$ **Tần số vô tuyến (RF)**; `Baseband` $\rightarrow$ **Băng tần cơ sở / Băng cơ bản**; `Passband` $\rightarrow$ **Băng thông / Dải thông qua**.
+           - `Modulation / Demodulation` $\rightarrow$ **Điều chế / Giải điều chế** (AM, FM, PM, ASK, FSK, PSK, QAM, OFDM).
+           - `Carrier frequency` $\rightarrow$ **Tần số sóng mang**; `Local Oscillator (LO)` $\rightarrow$ **Bộ dao động nội**.
+           - `Mixer` $\rightarrow$ **Bộ trộn tần / Bộ trộn kênh**; `Up-conversion / Down-conversion` $\rightarrow$ **Nâng tần / Hạ tần**.
+           - `Low-Noise Amplifier (LNA)` $\rightarrow$ **Bộ khuếch đại tạp âm thấp (LNA)**; `Power Amplifier (PA)` $\rightarrow$ **Bộ khuếch đại công suất (PA)**.
+           - `Filter` $\rightarrow$ **Bộ lọc** (`Low-Pass (LPF)` $\rightarrow$ **Thông thấp**; `High-Pass (HPF)` $\rightarrow$ **Thông cao**; `Band-Pass (BPF)` $\rightarrow$ **Thông dải**; `Band-Stop / Notch` $\rightarrow$ **Chắn dải / Triệt dải**).
+           - `Thermal noise / Johnson noise` $\rightarrow$ **Nhiễu nhiệt**; `Shot noise` $\rightarrow$ **Nhiễu hạt / Nhiễu phát xạ**; `Flicker noise ($1/f$)` $\rightarrow$ **Nhiễu nhấp nháy / Nhiễu $1/f$**.
+           - `Signal-to-Noise Ratio (SNR)` $\rightarrow$ **Tỷ số tín hiệu trên nhiễu (SNR)**; `Noise Figure (NF)` $\rightarrow$ **Hệ số tạp âm (NF)**.
+           - `1-dB Compression Point ($P_{1\text{dB}}$)` $\rightarrow$ **Điểm nén 1dB**; `Third-Order Intercept Point (IP3 / IIP3 / OIP3)` $\rightarrow$ **Điểm chặn bậc 3**.
+           - `Transmission Line` $\rightarrow$ **Đường truyền sóng**; `Characteristic Impedance ($Z_0$)` $\rightarrow$ **Trở kháng đặc tính** (chuẩn $50\,\Omega$ hoặc $75\,\Omega$).
+           - `Impedance Matching` $\rightarrow$ **Phối hợp trở kháng**; `Reflection Coefficient ($\Gamma$)` $\rightarrow$ **Hệ số phản xạ**; `VSWR` $\rightarrow$ **Tỷ số sóng đứng điện áp (VSWR)**; `S-parameters` $\rightarrow$ **Tham số tán xạ S ($S_{11}, S_{21}, S_{12}, S_{22}$)**.
 </localization_and_terminology>
 
 <digital_reproduction_standards>

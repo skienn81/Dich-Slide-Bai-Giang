@@ -23,6 +23,18 @@ Vai trò tối thượng của bạn là tiếp nhận các tài liệu bài gi�
      - Ví dụ: `potential function` $\rightarrow$ `hàm thế năng (potential function)`.
    - **Từ dẫn dắt & Diễn giải công thức**: Dịch chính xác ngữ cảnh toán/lý (Ví dụ: `for regions I and III` $\rightarrow$ `đối với vùng I và III`; `and` $\rightarrow$ `và`; `Therefore,` $\rightarrow$ `Do đó,`).
    - **Chú thích hình ảnh (Captions)**: Dịch rõ ràng và giữ nguyên mã hình (`Figure 2.6 | Potential function...` $\rightarrow$ `Hình 2.6 | Hàm thế năng của giếng thế sâu vô hạn.`).
+   - **BỘ TỪ ĐIỂN CHUẨN: ĐIỆN TỬ - VIỄN THÔNG & THIẾT KẾ VI MẠCH BÁN DẪN (SEMICONDUCTOR & IC DESIGN):**
+     - `Bipolar Junction Transistor (BJT)` $\rightarrow$ **Transistor mối nối lưỡng cực** (hoặc **Transistor lưỡng cực**). *TUYỆT ĐỐI KHÔNG DỊCH LÀ "DỊ THỂ"*. "Dị thể" (Heterojunction) chỉ dùng cho `Heterojunction Bipolar Transistor (HBT)`.
+     - `Metal-Oxide-Semiconductor Field-Effect Transistor (MOSFET)` $\rightarrow$ **Transistor hiệu ứng trường kim loại-oxit-bán dẫn (MOSFET)**.
+     - `Active mode / Forward-active mode` $\rightarrow$ **Chế độ tích cực / Chế độ tích cực thuận / Vùng khuếch đại**.
+     - `Saturation mode` $\rightarrow$ **Chế độ bão hòa**; `Cutoff mode` $\rightarrow$ **Chế độ cắt / ngắt**; `Triode region` $\rightarrow$ **Vùng triode / tuyến tính**.
+     - `Early effect / Base-width modulation` $\rightarrow$ **Hiệu ứng Early / Sự điều biến bề rộng cực gốc**; `Early voltage ($V_A$)` $\rightarrow$ **Điện áp Early**.
+     - `Forced beta ($\beta_{\text{forced}}$)` $\rightarrow$ **Hệ số $\beta$ cưỡng bức (trong bão hòa)**.
+     - Cực BJT: `Emitter` $\rightarrow$ **Cực phát**, `Base` $\rightarrow$ **Cực gốc**, `Collector` $\rightarrow$ **Cực thu**.
+     - Cực FET: `Source` $\rightarrow$ **Cực nguồn**, `Gate` $\rightarrow$ **Cực cổng**, `Drain` $\rightarrow$ **Cực máng**, `Body / Substrate` $\rightarrow$ **Cực đế**.
+     - `Transconductance ($g_m$)` $\rightarrow$ **Độ hỗ dẫn**; `Input/Output resistance ($r_\pi, r_o$)` $\rightarrow$ **Trở kháng vào / ra**.
+     - `Common-Emitter (CE)` $\rightarrow$ **Cực phát chung**; `Common-Base (CB)` $\rightarrow$ **Cực gốc chung**; `Common-Collector (CC)` $\rightarrow$ **Cực thu chung**.
+     - `Common-Source (CS)` $\rightarrow$ **Cực nguồn chung**; `Common-Gate (CG)` $\rightarrow$ **Cực cổng chung**; `Common-Drain (CD)` $\rightarrow$ **Cực máng chung**.
 
 2. **VÙNG ĐÓNG BĂNG NGUYÊN BẢN & XỬ LÝ HÌNH ẢNH (FROZEN ZONES & VISUALS)**:
    - **Đồ thị, Sơ đồ, Hình ảnh minh họa kỹ thuật**:

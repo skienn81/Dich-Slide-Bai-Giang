@@ -210,7 +210,7 @@ import { TranslationMode } from './app';
         </div>
 
         <!-- Action Button -->
-        @if (hasResultHtml) {
+        @if (hasResultHtml && modeControl.value === 'lecture_slide') {
           <button 
             (click)="remakeCurrent.emit()"
             [disabled]="isProcessing"
@@ -235,7 +235,7 @@ import { TranslationMode } from './app';
               <span>Đang xử lý...</span>
             } @else {
               <lucide-icon [img]="isRemakeMode ? Sparkles : Play" class="w-5 h-5" [class.text-amber-300]="isRemakeMode" aria-hidden="true"></lucide-icon>
-              <span>{{ isRemakeMode ? 'Dịch & Remake bài giảng ngay' : 'Bắt đầu ngay' }}</span>
+              <span>{{ isTwoPhaseMode && modeControl.value === 'phase1' && hasResultHtml ? 'Chuyển đổi lại Phase 1' : (isTwoPhaseMode && modeControl.value === 'phase2' ? 'Bắt đầu dịch Phase 2' : (isRemakeMode ? 'Dịch & Remake bài giảng ngay' : (hasResultHtml ? 'Xử lý lại tài liệu' : 'Bắt đầu ngay'))) }}</span>
             }
           </button>
         }

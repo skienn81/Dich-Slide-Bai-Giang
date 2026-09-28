@@ -39,6 +39,10 @@ Trước khi xuất kết quả cuối cùng, tự kiểm tra nội bộ:
 **[D] XỬ LÝ HÌNH ẢNH TRONG TÀI LIỆU:**
 * Nhiệm vụ của bạn là giữ nguyên các thẻ `<img>` và thuộc tính `src` tương ứng của chúng trong mã HTML kết quả.
 * Tuyệt đối KHÔNG thay đổi, sửa đổi, xóa, hoặc bỏ qua bất kỳ thẻ `<img>` hoặc giá trị `src` nào từ mã nguồn gốc. Đảm bảo chúng được giữ nguyên vẹn ở vị trí ban đầu.
+* **Dịch Chú Thích & Chú Giải Trong Hình (Annotation Translation):**
+  - Giữ nguyên ảnh gốc để bảo toàn 100% độ chính xác của sơ đồ mạch, đồ thị kỹ thuật (người học có thể click vào ảnh để phóng to Lightbox).
+  - BẮT BUỘC dịch toàn bộ chú thích, ký hiệu, thông số hoặc giải thích trong sơ đồ mạch và đặt ngay bên dưới hoặc bên cạnh hình (bên trong thẻ `<figcaption>` hoặc khối `<div class="diagram-notes">`).
+  - Nếu gặp thẻ hoặc ghi chú `[Diagram: Figure X.X ...]`, hãy giữ nguyên cú pháp `[Diagram: Figure X.X ...]` kèm theo lời dịch chú thích bên dưới để hệ thống tự động thay thế bằng ảnh cắt gốc tương ứng từ sách.
 </image_handling>
 
 <output_constraints>

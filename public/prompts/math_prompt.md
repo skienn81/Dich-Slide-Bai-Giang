@@ -44,16 +44,11 @@ Trước khi xuất kết quả cuối cùng, tự kiểm tra nội bộ:
 
 <image_handling>
 
-**[D] XỬ LÝ HÌNH ẢNH RASTER (BITMAPS) TỪ PDF:**
-* Nếu tài liệu PDF gốc có chứa hình ảnh, bạn sẽ nhận được các file ảnh kèm theo với một ID định danh (ví dụ: (This image has ID: ...)).
-* BẮT BUỘC chèn lại chính xác các hình ảnh này vào bản dịch HTML ở vị trí tương ứng bằng cách sử dụng thẻ `<img>` với thuộc tính `src` là ID của ảnh đó (ví dụ: `<img src="[ID_CỦA_ẢNH]" alt="...">`).
-* Tuyệt đối KHÔNG xóa, bỏ sót, hay đổi tên bất kỳ mã định danh hình ảnh nào. Chỉ có một ngoại lệ duy nhất đối với ảnh sơ đồ, biểu đồ đã được hướng dẫn kỹ trong SI.
-
-**[E] XỬ LÝ SƠ ĐỒ, BIỂU ĐỒ [KHÔNG PHẢI ẢNH RASTER]:**
-Nếu bạn thấy trong file PDF có sơ đồ biểu đồ, đồng thời bạn không nhận được ảnh raster gửi kèm của sơ đồ đó thì khả năng sơ đồ, biểu đồ đó được tạo ở định dạng khác (ví dụ vector), bạn cần tuân thủ chỉ dẫn dưới đây để có bản dịch chất lượng.
-* **Sơ đồ hoặc Biểu đồ chứa text**: Dịch text trong hình & cố gắng dùng HTML, CSS để tái tạo lại sơ đồ, biểu đồ chính xác nhất có thể. Sử dụng CSS để định vị một cách **khéo léo, linh hoạt và có kiểm soát** để đặt bản dịch (của các đoạn text trong hình) vào vị trí tương ứng **mà không làm tràn hoặc che khuất thông tin quan trọng**. Điều chỉnh `font-size` nếu cần.
-    * Nếu sơ đồ, biểu đồ dạng quá phức tạp, khiến cho việc tái tạo có khả năng cao thất bại, gây vỡ bố cục, chen lấn các phần nội dung khác thì hãy bỏ qua và chỉ cần ghi chú `sơ đồ (vui lòng xem ở bản gốc)` là đủ.
-* **Sơ đồ hoặc Biểu đồ toán học**: Nếu đó là sơ đồ, biểu đồ có đặc thù toán học (trục tọa độ, đồ thị, v.v...), hãy để riêng các chỉ thị trong SI liên quan đến `Tái tạo Đồ họa Toán học & Hình học bằng SVG (CHUẨN KHOA HỌC & ĐỘ CHÍNH XÁC CAO)` xử lý.
+**[D] XỬ LÝ HÌNH ẢNH & SƠ ĐỒ MẠCH / ĐỒ THỊ TỪ PDF:**
+* **ƯU TIÊN SỐ 1 - SỬ DỤNG ẢNH CẮT GỐC NGUYÊN BẢN:** Nếu tài liệu PDF gốc có chứa hình ảnh hoặc sơ đồ mạch điện được trích xuất (ID có dạng `..._img_...` hoặc `..._fig_...`), **BẮT BUỘC chèn lại chính xác các hình ảnh này vào bản dịch HTML** bằng thẻ:
+  `<figure class="diagram-figure" style="text-align: center; margin: 2rem auto;"><img src="[ID_CỦA_ẢNH]" alt="..." class="book-img" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: pointer;"><figcaption style="margin-top: 10px; font-size: 0.95rem;"><strong>Hình X.X | [Tên hình]</strong><div class="diagram-notes" style="text-align: left; background: #f8fafc; padding: 10px 14px; border-radius: 6px; margin-top: 8px; font-size: 0.9rem; border-left: 3px solid #0284c7;"><!-- Dịch toàn bộ các nhãn, thông số, chiều dòng điện, bước giải trong hình ra đây để người học đối chiếu dễ dàng --></div></figcaption></figure>`.
+* **BẢO TOÀN ĐỘ CHÍNH XÁC & KHÔNG VẼ LẠI:** Giữ nguyên vẹn ảnh gốc giúp người học có được độ chuẩn xác 100% tuyệt đối của giáo trình quốc tế, không lo sai lệch linh kiện hay giá trị điện trở, đồng thời hỗ trợ click phóng to (Lightbox). **TUYỆT ĐỐI KHÔNG CẦN TỰ VẼ LẠI MẠCH PHỨC TẠP BẰNG SVG NẾU ĐÃ CÓ ẢNH ĐƯỢC CẤP**.
+* Chỉ khi nào KHÔNG có ID ảnh nào được cung cấp trong danh sách ảnh đính kèm thì mới áp dụng vẽ vector SVG đơn giản hoặc ghi chú sơ đồ.
 
 </image_handling>
 

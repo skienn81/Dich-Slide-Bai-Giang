@@ -197,6 +197,100 @@ export class PdfService {
           }
         } catch { /* ignore iterator error */ }
 
+        // 3. Quét phát hiện Figure/Fig. và tự động cắt sơ đồ mạch / đồ thị vector trực tiếp từ canvas trang PDF
+        try {
+          const textContent = await page.getTextContent();
+          const items = (textContent?.items || []) as any[];
+
+          interface LineBlock {
+            text: string;
+            x: number;
+            y: number;
+            w: number;
+            h: number;
+          }
+
+          const lines: LineBlock[] = [];
+          for (const it of items) {
+            if (!it.str || !it.transform) continue;
+            const x = it.transform[4];
+            const y = it.transform[5];
+            const w = it.width || 0;
+            const h = it.height || Math.abs(it.transform[0]) || 12;
+
+            const existing = lines.find(l => Math.abs(l.y - y) < 4);
+            if (existing) {
+              existing.text += ' ' + it.str;
+              existing.w = Math.max(existing.w, x + w - existing.x);
+            } else {
+              lines.push({ text: it.str, x, y, w, h });
+            }
+          }
+
+          // Sắp xếp các dòng từ trên xuống dưới (trong hệ tọa độ PDF, y lớn hơn là nằm cao hơn)
+          lines.sort((a, b) => b.y - a.y);
+
+          for (let li = 0; li < lines.length; li++) {
+            const line = lines[li];
+            const trimmed = line.text.trim();
+            // Bắt các mẫu: Figure 6.1, Figure P6.28, Figure E6.13, Fig. 6.3, (b) Figure 6.12...
+            const match = trimmed.match(/(?:^|\b)(?:Figure|Fig\.)\s+((?:[A-Z0-9]+[.-])?[A-Z0-9]+(?:\.[A-Z0-9]+)?)/i);
+            if (match) {
+              const rawFigNum = match[1];
+              const figId = rawFigNum.replace(/[^a-zA-Z0-9_]/g, '_');
+              const imageId = `${pdfHash}_fig_${figId}`;
+
+              if (images.some(img => img.id === imageId)) continue;
+
+              // Tọa độ y trong PDF tính từ đáy lên. Sơ đồ/hình vẽ nằm ở phía TRÊN dòng caption (y lớn hơn).
+              const pageH = page.view ? page.view[3] : viewport.height / 1.5;
+              // Tìm dòng văn bản chính (body paragraph) hoặc caption liền kề phía trên để xác định đỉnh hình
+              let topPdfY = pageH - 45;
+              for (let pi = li - 1; pi >= 0; pi--) {
+                const prev = lines[pi];
+                if (prev.y > line.y + 25) {
+                  const isBodyOrHeader = prev.w > 160 || prev.text.trim().length > 35 || /(?:^|\b)(?:Figure|Fig\.)/i.test(prev.text.trim()) || prev.y >= pageH - 55;
+                  if (isBodyOrHeader) {
+                    topPdfY = prev.y - 6;
+                    break;
+                  }
+                }
+              }
+
+              // Đáy ảnh bao gồm cả dòng chú thích để hình ảnh trọn vẹn
+              const bottomPdfY = line.y - (line.h || 12) - 6;
+              const heightPdf = topPdfY - bottomPdfY;
+
+              if (heightPdf > 40) {
+                const pageW = page.view ? page.view[2] : viewport.width / 1.5;
+                const ptTop = viewport.convertToViewportPoint(25, topPdfY);
+                const ptBottom = viewport.convertToViewportPoint(pageW - 25, bottomPdfY);
+
+                const cropX = Math.max(0, Math.min(ptTop[0], ptBottom[0]));
+                const cropY = Math.max(0, Math.min(ptTop[1], ptBottom[1]));
+                const cropW = Math.min(renderCanvas.width - cropX, Math.abs(ptBottom[0] - ptTop[0]));
+                const cropH = Math.min(renderCanvas.height - cropY, Math.abs(ptBottom[1] - ptTop[1]));
+
+                if (cropW > 80 && cropH > 40) {
+                  const figCanvas = document.createElement('canvas');
+                  figCanvas.width = cropW;
+                  figCanvas.height = cropH;
+                  const figCtx = figCanvas.getContext('2d');
+                  if (figCtx) {
+                    figCtx.imageSmoothingEnabled = true;
+                    figCtx.imageSmoothingQuality = 'high';
+                    figCtx.drawImage(renderCanvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+                    const dataUrl = figCanvas.toDataURL('image/jpeg', 0.95);
+                    images.push({ id: imageId, dataUrl });
+                  }
+                }
+              }
+            }
+          }
+        } catch (textErr) {
+          console.warn(`[PDF Processor] Lỗi phát hiện/cắt sơ đồ trang ${pageNum}:`, textErr);
+        }
+
       } catch (err) {
         console.warn(`[PDF Processor] Lỗi xử lý trang ${pageNum} để trích xuất ảnh:`, err);
       }

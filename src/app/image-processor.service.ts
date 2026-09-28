@@ -47,19 +47,36 @@ export class ImageProcessorService {
           replacedImageIds.add(img.id);
         }
 
-        // Suffix match: if img.id ends with img_X, also match src="img_X" or src="slide_img_X"
-        const suffixMatch = img.id.match(/(img_.*)$/);
+        // Suffix match: if img.id ends with img_X or fig_X, also match src="img_X", src="fig_X", src="figure_X"
+        const suffixMatch = img.id.match(/((?:img|fig|figure)_.*)$/i);
         if (suffixMatch) {
           const suffix = suffixMatch[1];
           const escapedSuffix = suffix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          const suffixRegex = new RegExp(`src=["']\\[?(?:slide_)?${escapedSuffix}\\]?["']`, 'g');
+          const suffixRegex = new RegExp(`src=["']\\[?(?:slide_)?${escapedSuffix}\\]?["']`, 'gi');
           if (suffixRegex.test(processedHtml)) {
             processedHtml = processedHtml.replace(suffixRegex, `src="${img.dataUrl}"`);
             replacedImageIds.add(img.id);
           }
+
+          // Also match "Figure 6.15" or "Fig. 6.15" in diagram placeholders and src attributes
+          const figNumMatch = suffix.match(/(?:fig|figure)_(.+)$/i);
+          if (figNumMatch) {
+            const numStr = figNumMatch[1].replace(/_/g, '[._]');
+            const srcFigRegex = new RegExp(`src=["']\\[?(?:Figure|Fig\\.)?[_ ]*${numStr}\\]?["']`, 'gi');
+            if (srcFigRegex.test(processedHtml)) {
+              processedHtml = processedHtml.replace(srcFigRegex, `src="${img.dataUrl}"`);
+              replacedImageIds.add(img.id);
+            }
+
+            const diagPlaceholderRegex = new RegExp(`\\[(?:Diagram|Hình|Figure):\\s*(?:Figure|Fig\\.)?\\s*${numStr}[^\\]]*\\]`, 'gi');
+            if (diagPlaceholderRegex.test(processedHtml)) {
+              processedHtml = processedHtml.replace(diagPlaceholderRegex, `<figure class="diagram-figure" style="text-align:center; margin:1.5rem auto;"><img src="${img.dataUrl}" alt="Figure ${figNumMatch[1]}" class="book-img" style="max-width:100%; height:auto; margin:0 auto; cursor:pointer; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08);"></figure>`);
+              replacedImageIds.add(img.id);
+            }
+          }
         }
 
-        const fallbackRegex = new RegExp(`\\[IMAGE:\\s*${escapedId}\\]`, 'g');
+        const fallbackRegex = new RegExp(`\\[(?:IMAGE|Diagram):\\s*${escapedId}\\]`, 'gi');
         processedHtml = processedHtml.replace(fallbackRegex, `<img src="${img.dataUrl}" style="max-width: 100%; height: auto;">`);
       }
 
@@ -68,7 +85,7 @@ export class ImageProcessorService {
       const unassignedImages = extractedImages.filter(img => !replacedImageIds.has(img.id));
       let fallbackIndex = 0;
 
-      processedHtml = processedHtml.replace(/<img\s+([^>]*?)src=["'](\[ID_CỦA_ẢNH\]|\[?ID_[^"']*\]?|\[?IMAGE:[^"']*\]?|img_[^"']*|slide_img_[^"']*)["']([^>]*?)>/gi, (match, before, srcVal, after) => {
+      processedHtml = processedHtml.replace(/<img\s+([^>]*?)src=["'](\[ID_CỦA_ẢNH\]|\[?ID_[^"']*\]?|\[?IMAGE:[^"']*\]?|img_[^"']*|fig(?:ure)?_[^"']*|slide_img_[^"']*)["']([^>]*?)>/gi, (match, before, srcVal, after) => {
         if (srcVal.startsWith('data:') || srcVal.startsWith('http')) {
           return match;
         }
